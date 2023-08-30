@@ -1,5 +1,5 @@
 @extends('frontend.global.auth_master')
-@section('title', __('User Login'))
+@section('title', __('User - Reset Password'))
 
 @section('custom_stylesheet')
 @stop
@@ -19,29 +19,30 @@
                             <div class="col-lg-7">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-4">Welcome to Quiz App! Login Here</h1>
+                                        <h1 class="h4 text-gray-900 mb-4">Reset Password</h1>
                                     </div>
                                     <!--begin::error message-->
                                     @include('errors.custom_error_message')
                                     <!--begin::error message-->
-                                    <form class="user" method="post" action="{{ url('/user/login') }}">
+                                    <form action="{{ route('userResetPasswordSave') }}" method="post">
                                         @csrf
+                                        <input type="hidden" name="email_or_mobile" value="{{ Cookie::get('email_or_mobile_cookie') }}" />
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user"
-                                                id="email_or_mobile" aria-describedby="email_or_mobile"
-                                                placeholder="Enter Email/Mobile ..." name="email_or_mobile" value="{{ old("email_or_mobile") }}">
+                                            <label for="password">New Password</label>
+                                            <input type="password" class="form-control form-control-user" id="password"
+                                                aria-describedby="password" placeholder="New Password ..." name="password">
                                         </div>
                                         <div class="form-group">
+                                            <label for="password">Confirm New Password</label>
                                             <input type="password" class="form-control form-control-user"
-                                                id="password" placeholder="Password" name="password">
+                                                id="confirm_password" aria-describedby="confirm_password"
+                                                placeholder="Confirm New Password ..." name="confirm_password">
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">
-                                            Login
-                                        </button>
+                                        <button type="submit" class="btn btn-primary">Update password</button>
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="{{ route('userForgetPassword') }}">Forgot Password?</a>
+                                        <a class="small" href="{{ route('userlogin') }}">Back to Login!</a>
                                     </div>
                                     <div class="text-center">
                                         <a class="small" href="{{ route('userRegister') }}">Create an Account!</a>
@@ -62,5 +63,5 @@
 @stop
 
 @section('auth_custom_scripts')
-{!! \App\UtilityFunction::getToastrMessage(Session::get('TOASTR_MESSAGE')) !!}
+    {!! \App\UtilityFunction::getToastrMessage(Session::get('TOASTR_MESSAGE')) !!}
 @stop

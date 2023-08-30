@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Frontend\Auth\ChangePasswordController;
+use App\Http\Controllers\Frontend\Auth\ForgetPasswordController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Frontend\Auth\LoginController;
@@ -35,6 +36,13 @@ Route::post('/user/login', [LoginController::class, 'userLogin']);
 Route::get('/register', [UserRegistrationController::class, 'register'])->name('userRegister');
 Route::post('/save-new-user', [UserRegistrationController::class, 'saveNewUser']);
 /* user registration routes */
+
+/* user forget password routes */
+Route::get('/forget-password', [ForgetPasswordController::class, 'userForgetPassword'])->name('userForgetPassword');
+Route::any('/forget-password-user-check', [ForgetPasswordController::class, 'forgetPasswordUserCheck'])->name('forgetPasswordUserCheck');
+Route::any('/reset-password', [ForgetPasswordController::class, 'userResetPasswordView'])->name('userResetPasswordView');
+Route::any('/save-reset-password', [ForgetPasswordController::class, 'userResetPasswordSave'])->name('userResetPasswordSave');
+/* user forget password routes */
 
 /* user logout */
 Route::get('/logout', [LogoutController::class, 'logout']);

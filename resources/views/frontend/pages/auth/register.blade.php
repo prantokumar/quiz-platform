@@ -1,11 +1,10 @@
 @extends('frontend.global.auth_master')
-@section('title', __('User Login'))
+@section('title', __('User Register'))
 
 @section('custom_stylesheet')
 @stop
 
 @section('auth_content')
-    <!--begin::Authentication - Sign-in Admin-->
     <div class="container">
         <!-- Outer Row -->
         <div class="row justify-content-center">
@@ -50,7 +49,7 @@
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="{{ route('userlogin') }}">Forgot Password?</a>
+                                        <a class="small" href="{{ route('userForgetPassword') }}">Forgot Password?</a>
                                     </div>
                                     <div class="text-center">
                                         <a class="small" href="{{ route('userlogin') }}">Already have an account? Login!</a>
@@ -67,7 +66,6 @@
         </div>
 
     </div>
-    <!--end::Authentication - Sign-in Admin-->
 @stop
 
 @section('auth_custom_scripts')

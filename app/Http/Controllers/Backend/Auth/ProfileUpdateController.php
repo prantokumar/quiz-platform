@@ -59,7 +59,7 @@ class ProfileUpdateController extends Controller
                 return redirect()->back()->with('error_message', 'Something went wrong! Please try again later.');
             }
         }
-        return view('/admin/update-profile');
+        return redirect()->route('adminProfileUpdate');
     }
     /* profile update save */
 }
