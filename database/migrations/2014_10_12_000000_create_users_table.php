@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('mobile_number', 14)->nullable()->collation('utf8mb4_unicode_ci');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('photo', 255)->nullable()->collation('utf8mb4_unicode_ci');
             $table->rememberToken();
             $table->timestamps();
 

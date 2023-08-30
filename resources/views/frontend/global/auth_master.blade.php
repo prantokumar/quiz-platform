@@ -19,5 +19,6 @@
     {{-- custom local js cdn area start --}}
     @include('frontend.global.cdnjs')
     {{-- custom local js cdn area end --}}
+    @yield('auth_custom_scripts')
 </body>
 </html>

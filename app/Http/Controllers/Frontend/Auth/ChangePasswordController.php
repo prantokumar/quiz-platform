@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Frontend\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Enum\MessageTypeEnum;
+use App\Http\Controllers\Enum\UserTypeEnum;
+use App\Http\Requests\PasswordUpdateFormRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -12,15 +15,13 @@ use Illuminate\Support\Facades\Log;
 
 class ChangePasswordController extends Controller
 {
-
-
     /* change password view */
-    public function changePassword()
+    public function userUpdatePassword()
     {
         try {
             return view('frontend.pages.auth.change_password');
         } catch (Exception $error) {
-            Log::info('changePassword => frontend Error');
+            Log::info('userUpdatePassword => frontend Error');
             Log::info($error->getMessage());
             dd($error->getMessage());
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
@@ -29,20 +30,21 @@ class ChangePasswordController extends Controller
     /* change password view */
 
     //save updated password
-    public function passwordSave(Request $request)
+    public function userUpdatePasswordSave(PasswordUpdateFormRequest $request)
     {
         try {
-            $user = User::find(Auth::user()->id);
+            $user_id = Auth::user()->id;
+            //$user = User::find(Auth::user()->id);
+            $user = User::where('user_type', UserTypeEnum::USER)->where('id', $user_id)->first();
             if (isset($user)) {
                 if ($request->password != $request->confirm_password) {
                     return redirect()->back()->with('error_message', 'Ooops! New password & confirm password does not match!.');
                 }
-                //that means the user login as social and now want to set his password
                 if (!isset($user->password) || Hash::check($request->current_password, $user->password)) {
                     try {
                         $user->password = bcrypt($request->password);
                         $user->save();
-                        return redirect()->back()->with('success_message', 'Password updated successfully.');
+                        return redirect()->back()->with('TOASTR_MESSAGE', MessageTypeEnum::SUCCESS . trans('Password updated successfully!'));
                     } catch (\Exception $e) {
                         return redirect()->back()->with('error_message', 'Something went wrong! Please try again later.');
                     }
@@ -50,10 +52,11 @@ class ChangePasswordController extends Controller
                 return redirect()->back()->with('error_message', 'Provided old password is wrong!');
             }
         } catch (Exception $error) {
-            Log::info('passwordSave => frontend Error');
+            Log::info('userUpdatePasswordSave => frontend Error');
             Log::info($error->getMessage());
             dd($error->getMessage());
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
         }
     }
+    //save updated password
 }

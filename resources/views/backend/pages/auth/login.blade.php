@@ -23,14 +23,14 @@
                                         <h1 class="h4 text-gray-900 mb-4">Admin Login</h1>
                                     </div>
                                     <!--begin::error message-->
-                                    @include('errors.error_message')
+                                    @include('errors.custom_error_message')
                                     <!--begin::error message-->
                                     <form class="user" method="post" action="{{ url('/admin/post/login') }}">
                                         @csrf
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user"
                                                 id="email_or_mobile" aria-describedby="email_or_mobile"
-                                                placeholder="Enter Email/Mobile ..." name="email_or_mobile"  value="{{ old("email") }}">
+                                                placeholder="Enter Email/Mobile ..." name="email_or_mobile" value="{{ old("email_or_mobile") }}">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user"

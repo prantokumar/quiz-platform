@@ -1,8 +1,11 @@
 <?php
+
+use App\Http\Controllers\Backend\Auth\ChangePasswordController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\Dashboard\DashboardController;
 use App\Http\Controllers\Backend\Auth\LogoutController;
+use App\Http\Controllers\Backend\Auth\ProfileUpdateController;
 
 Route::group(['prefix' => 'admin'], function () {
 
@@ -16,6 +19,14 @@ Route::group(['prefix' => 'admin'], function () {
     /* admin logout */
 
     Route::group(['middleware' => ['auth']], function () {
+        /* admin update profile page */
+        Route::get('/update-profile', [ProfileUpdateController::class, 'adminProfileUpdate'])->name('adminProfileUpdate');
+        Route::post('/save-profile-data', [ProfileUpdateController::class, 'adminProfileUpdateSave'])->name('adminProfileUpdateSave');
+        /* admin update profile page */
+        /* admin password update */
+        Route::get('/change-password', [ChangePasswordController::class, 'adminUpdatePassword'])->name('adminUpdatePassword');
+        Route::post('/update-password-save', [ChangePasswordController::class, 'adminUpdatePasswordSave'])->name('adminUpdatePasswordSave');
+        /* admin password update */
         /* view admin dashboard page */
         Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('adminDashboard');
         /* view admin dashboard page */
