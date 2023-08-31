@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\Dashboard\DashboardController;
 use App\Http\Controllers\Backend\Auth\LogoutController;
 use App\Http\Controllers\Backend\Auth\ProfileUpdateController;
+use App\Http\Controllers\Backend\Exam\ExamController;
 use App\Http\Controllers\Backend\Users\UserController;
 
 Route::group(['prefix' => 'admin'], function () {
@@ -34,5 +35,10 @@ Route::group(['prefix' => 'admin'], function () {
         /* view registered users */
         Route::get('/users', [UserController::class, 'getAllRegistedUsers'])->name('getAllRegistedUsers');
         /* view registered users */
+
+        /* exam module */
+        Route::get('/exams', [ExamController::class, 'getExams'])->name('getExams');
+        Route::any('/show-exams', [ExamController::class, 'showExams'])->name('showExams');
+        /* exam module */
     });
 });
