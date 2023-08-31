@@ -19,6 +19,16 @@
     </li>
 
     <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Users -->
+    <li class="nav-item @if (!empty($menu) && $menu == 'users') active @endif">
+        <a class="nav-link" href="{{ route('getAllRegistedUsers') }}">
+            <i class="fas fa-fw fa-users"></i>
+            <span>Users</span></a>
+    </li>
+
+    <!-- Divider -->
     <hr class="sidebar-divider">
 
     <!-- Heading -->

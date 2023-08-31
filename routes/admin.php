@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\Auth\LoginController;
 use App\Http\Controllers\Backend\Dashboard\DashboardController;
 use App\Http\Controllers\Backend\Auth\LogoutController;
 use App\Http\Controllers\Backend\Auth\ProfileUpdateController;
+use App\Http\Controllers\Backend\Users\UserController;
 
 Route::group(['prefix' => 'admin'], function () {
 
@@ -30,5 +31,8 @@ Route::group(['prefix' => 'admin'], function () {
         /* view admin dashboard page */
         Route::get('/dashboard', [DashboardController::class, 'adminDashboard'])->name('adminDashboard');
         /* view admin dashboard page */
+        /* view registered users */
+        Route::get('/users', [UserController::class, 'getAllRegistedUsers'])->name('getAllRegistedUsers');
+        /* view registered users */
     });
 });
