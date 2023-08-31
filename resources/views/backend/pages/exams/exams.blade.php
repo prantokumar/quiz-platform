@@ -232,8 +232,8 @@
     {{-- Edit Exam Modal --}}
 
     {{-- delete exam modal --}}
-    <div class="modal fade delete_exam_modal" tabindex="-1" role="dialog"
-        aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade delete_exam_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -248,7 +248,8 @@
                         <input type="hidden" id="delete_exam_id" class="form-control form-control-solid">
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeDeleteExamModal">Cancel</button>
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal"
+                            id="closeDeleteExamModal">Cancel</button>
                         <button class="btn btn-primary" id="delete_exam_button">Yes</button>
                     </div>
                 </form>
@@ -256,6 +257,25 @@
         </div>
     </div>
     {{-- delete exam modal --}}
+
+    {{-- question add/edit full screen modal --}}
+    <div class="modal fade" id="add_edit_question_area_modal" tabindex="-1" role="dialog"
+        aria-labelledby="fullscreenModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fullscreenModalLabel">Add/Edit Questions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="exam_id" class="form-control form-control-solid">
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- question add/edit full screen modal --}}
 @stop
 
 @section('custom_scripts')

@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Backend\Exam;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Enum\ExamEnum;
 use App\Http\Controllers\Enum\MessageTypeEnum;
+use App\Http\Controllers\Enum\QuestionTypeEnum;
 use App\Models\Exam;
+use App\Models\ExamQuestion;
+use App\Models\ExamSubmission;
+use App\Models\Question;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -73,18 +77,30 @@ class ExamController extends Controller
                                 </div>';
 
                 $exam_data .= '<div class="exam_infos">';
-                $exam_data .= '<span class="badge badge-pill badge-primary">Questions : 0</span>';
+                $question_count = Question::examTotalQuestionCount($exam->id);
+                if ($question_count > 0) {
+                    $exam_data .= '<span class="badge badge-pill badge-primary">Questions : ' . $question_count . '</span>';
+                } else {
+                    $exam_data .= '<span class="badge badge-pill badge-primary">Questions : 0</span>';
+                }
                 $exam_data .= '<span class="badge badge-pill badge-info m-2">Attempts : ' . $exam->no_of_attempts . '</span>';
                 $exam_data .= '<span class="badge badge-pill badge-success">Time : ' . $exam->exam_duration . ' minutes.</span>';
-                $exam_data .= '<span class="badge badge-pill badge-secondary m-2">Marks : 0</span>';
+                $mark = ExamQuestion::getExamMarks($exam->id)->marks;
+                if ($mark > 0) {
+                    $exam_data .= '<span class="badge badge-pill badge-secondary m-2">Marks : ' . $mark . '</span>';
+                } else {
+                    $exam_data .= '<span class="badge badge-pill badge-secondary m-2">Marks : 0</span>';
+                }
                 $exam_data .= '</div>';
 
                 $exam_data .= '<p class="card-text">Instructions : ' . $exam->instruction . '</p>';
                 $exam_data .= '<div class="input-group mb-3"><div class="input-group-prepend">
                                 <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
                             <div class="dropdown-menu">';
-
-                $exam_data .= '<a class="dropdown-item" style="cursor:pointer;">Add/Edit Question</a>';
+                $subbmission_count = ExamSubmission::submissionCount($exam->id);
+                if ($subbmission_count <= 0) {
+                    $exam_data .= '<a class="dropdown-item" style="cursor:pointer;" data-toggle="modal" data-target="#add_edit_question_area_modal" onclick="addOrEditQuestions(' . $exam->id . ')">Add/Edit Question</a>';
+                }
                 $exam_data .= '<a class="dropdown-item" style="cursor:pointer;" data-toggle="modal" data-target=".edit_exam_modal" onclick="editExam(' . $exam->id . ')">Edit Exam</a>';
                 $exam_data .= ' <a class="dropdown-item" href="#" style="cursor:pointer;" data-toggle="modal" data-target=".delete_exam_modal" onclick="deleteExam(' . $exam->id . ')">Delete Exam</a>';
 
@@ -204,6 +220,60 @@ class ExamController extends Controller
             Log::info('deleteExam => Backend Error');
             Log::info($error->getMessage());
             dd($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+        }
+    }
+
+    public function getQuestionListByExamId(Request $request)
+    {
+        try {
+            $assignment_id = $request->assignment_id;
+            $question_list = Question::select('questions.*')->join('exam_questions', 'questions.id', 'exam_questions.question_id')
+                ->where('exam_questions.exam_id', $assignment_id)->orderBy('questions.id', 'desc')->get();
+            //dd($question_list);
+            $data_generate_for_quesion_list_dropdown = '';
+            $question_list_grid = '';
+            $data_generate_for_quesion_list_dropdown .= '<option>choose question</option>';
+            $i = 1;
+            foreach ($question_list as $key => $question_list_data) {
+                $question_type_id = $question_list_data->question_type_id;
+                //dd($question_type_id);
+                if (isset($question_type_id) && $question_type_id > 0) {
+
+                    if ($question_type_id == QuestionTypeEnum::Multiple_Choice) {
+                        $qtype = 'MCQ';
+                    } else {
+                        $qtype = '';
+                    }
+
+                    //dd($qtype);
+                    //print($question_list->id . "##" . $question_list->search_title);
+                    $data_generate_for_quesion_list_dropdown .= '<option value="' . $question_list_data->id . '">' . $question_list_data->search_title . '</option>';
+                    $question_list_grid .= '<button class="nav-link q_list_grid_button text-start" id="' . $question_list_data->id . '" data-bs-toggle="pill"';
+                    $question_list_grid .= 'data-bs-target="#v-pills-settings" type="button" role="tab"';
+                    $question_list_grid .= 'aria-controls="v-pills-settings" aria-selected="false">';
+                    $question_list_grid .= '<span class="qCount" >' . $i . ') </span><span class=" qtype badge badge-info">' . $qtype . '    </span><span class="qans">' . $question_list_data->search_title . '</span></button>';
+                    $i++;
+                    //dd($question_list->id . "##" . $question_list->search_title);
+                    //dd('qtype = ' . $qtype);
+                    //dd($question_list_grid);
+
+                }
+            }
+
+            $total_question_count = 0;
+            $total_question_count = Question::join("exam_questions", "questions.id", "exam_questions.question_id")->where("exam_questions.exam_id", $assignment_id)->count();
+            $total_marks = ExamQuestion::getExamMarks($assignment_id)->marks;
+            //dd('qtype = ' . $qtype);
+            //dd($total_question_count);
+            if ($total_question_count > 0) {
+                return response()->json(array('success' => true, 'total_question_count' => $total_question_count, 'total_marks' => $total_marks, 'question_list_grid' => $question_list_grid, 'data_generate_for_quesion_list_dropdown' => $data_generate_for_quesion_list_dropdown));
+            } else {
+                return response()->json(array('success' => true, 'total_question_count' => $total_question_count, 'total_marks' => $total_marks));
+            }
+        } catch (Exception $error) {
+            Log::info('getQuestionListByExamId => Backend Error');
+            Log::info($error->getMessage());
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
         }
     }

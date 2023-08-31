@@ -250,3 +250,29 @@
     });
 </script>
 {{-- reset edit exam modal --}}
+
+{{-- question area --}}
+{{-- add/edit question modal open  --}}
+<script>
+    function addOrEditQuestions(examID) {
+        $.ajax({
+            type: 'POST',
+            url: '{{ route('getExamDataWithExamId') }}',
+            data: {
+                'exam_id': examID,
+                "_token": "{{ csrf_token() }}",
+            },
+            success: function(data) {
+                if (data.success) {
+                    $('#exam_id').val(data.exam.id);
+                }
+            },
+        });
+    }
+</script>
+{{-- add/edit question modal open  --}}
+
+{{-- reset question area --}}
+{{-- reset question area --}}
+
+{{-- question area --}}
