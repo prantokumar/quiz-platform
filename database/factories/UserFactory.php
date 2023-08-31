@@ -25,13 +25,27 @@ class UserFactory extends Factory
     {
         return [
             'name' => 'Pranto Kumar Saha',
-            'user_type' => UserTypeEnum::ADMIN,
+            'user_type' => UserTypeEnum::USER,
             'email' => 'officialprantosaha@gmail.com',
             'mobile_number' => '01306357873',
             'email_verified_at' => now(),
             'password' => '$2y$10$i5U9Xkbz1.33QSlopN5dw.mroEv1OavOvBEHHpuRVgJKwAr02aITK', // 123456
             'remember_token' => Str::random(10),
         ];
+    }
+
+    // Defining a state for the admin user
+    public function configureAdminUser()
+    {
+        return $this->state([
+            'name' => 'Administrator',
+            'user_type' => UserTypeEnum::ADMIN,
+            'email' => 'administrator@gmail.com',
+            'mobile_number' => '01576518050',
+            'email_verified_at' => now(),
+            'password' => '$2y$10$i5U9Xkbz1.33QSlopN5dw.mroEv1OavOvBEHHpuRVgJKwAr02aITK', // 123456
+            'remember_token' => Str::random(10),
+        ]);
     }
 
     /**
