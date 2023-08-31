@@ -7,6 +7,7 @@ use App\Http\Controllers\Enum\UserStatusEnum;
 use App\Http\Controllers\Enum\UserTypeEnum;
 use App\Http\Requests\LoginFormRequest;
 use App\Models\User;
+use App\Traits\SanctumTrait;
 use App\UtilityFunction;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
+    use SanctumTrait;
     protected $loginPath = 'admin/login';
     protected $redirectTo = '/';
     protected $redirectAfterLogout = 'admin/login';
@@ -59,12 +61,13 @@ class LoginController extends Controller
 
                             if (filter_var($request->email_or_mobile, FILTER_VALIDATE_EMAIL)) {
                                 if (Auth::attempt(['email' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::ADMIN])) {
-
+                                    // Generate the authenticated admin user token
+                                    $this->generateSanctumAuthenticationToken($request, $user_details);
                                     return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN'));
                                 }
                             } else {
                                 if (Auth::attempt(['mobile_number' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::ADMIN])) {
-
+                                    $this->generateSanctumAuthenticationToken($request, $user_details);
                                     return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN'));
                                 }
                             }

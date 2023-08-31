@@ -12,7 +12,6 @@
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
-                <img class="img-profile rounded-circle" src="{{ asset('images/users/'. Auth::user()->photo) }}">
                  <img class="img-profile rounded-circle"
                     @if (isset(Auth::user()->photo)) src="{{ asset('images/users/' . Auth::user()->photo) }}" @else src="{{ asset('backend/img/undraw_profile.svg') }}" @endif>
             </a>
