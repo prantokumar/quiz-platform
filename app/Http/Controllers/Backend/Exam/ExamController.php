@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Backend\Exam;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Enum\ExamEnum;
+use App\Http\Controllers\Enum\MessageTypeEnum;
 use App\Models\Exam;
 use Carbon\Carbon;
 use Exception;
@@ -16,7 +17,7 @@ class ExamController extends Controller
     public function getExams()
     {
         try {
-            $exams = Exam::where('is_published', ExamEnum::PUBLISHED)->paginate(env('PAGINATION_SMALL'));
+            $exams = Exam::where('is_published', ExamEnum::PUBLISHED)->where('status', ExamEnum::ACTIVE)->paginate(env('PAGINATION_SMALL'));
             return view('backend.pages.exams.exams')->with(['exams' => $exams]);
         } catch (Exception $error) {
             Log::info('getExams => Backend Error');
@@ -29,7 +30,7 @@ class ExamController extends Controller
     public function showExams()
     {
         try {
-            $exams = Exam::where('exam_created_by', Auth::user()->id)->orderBy('is_published', 'desc')->get();
+            $exams = Exam::where('exam_created_by', Auth::user()->id)->where('status', ExamEnum::ACTIVE)->orderBy('id', 'desc')->orderBy('is_published', 'desc')->get();
             $data_generate_for_exams = $this->examHtmlGenerate($exams);
             return response()->json(array('success' => true, 'data_generate_for_exams' => $data_generate_for_exams));
         } catch (Exception $error) {
@@ -47,12 +48,12 @@ class ExamController extends Controller
             $exam_data .= '';
             $exam_data .= '<div class="row g-5">';
             foreach ($exams as $key => $exam) {
-                $exam_data .= '<div class="col-xl-6 col-lg-6 col-md-6 col-12">';
+                $exam_data .= '<div class="col-xl-6 col-lg-6 col-md-6 col-12 p-2">';
                 $exam_data .= '<div class="card">';
-                $exam_data .= '<h5 class="card-header font-weight-bold">'. ($key+1) .'. '. $exam->exam_name .' ';
+                $exam_data .= '<h5 class="card-header font-weight-bold">' . ($key + 1) . '. ' . $exam->exam_name . ' ';
                 if ($exam->is_published == ExamEnum::PUBLISHED) {
                     $exam_data .= '<span class="badge badge-success">published</span>';
-                }else{
+                } else {
                     $exam_data .= '<span class="badge badge-danger">unpublished</span>';
                 }
                 if ($exam->result_display == ExamEnum::AUTOMATIC_EVALUATION) {
@@ -73,7 +74,7 @@ class ExamController extends Controller
 
                 $exam_data .= '<div class="exam_infos">';
                 $exam_data .= '<span class="badge badge-pill badge-primary">Questions : 0</span>';
-                $exam_data .= '<span class="badge badge-pill badge-info m-2">Attempts : '. $exam->no_of_attempts .'</span>';
+                $exam_data .= '<span class="badge badge-pill badge-info m-2">Attempts : ' . $exam->no_of_attempts . '</span>';
                 $exam_data .= '<span class="badge badge-pill badge-success">Time : ' . $exam->exam_duration . ' minutes.</span>';
                 $exam_data .= '<span class="badge badge-pill badge-secondary m-2">Marks : 0</span>';
                 $exam_data .= '</div>';
@@ -83,9 +84,9 @@ class ExamController extends Controller
                                 <button class="btn btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>
                             <div class="dropdown-menu">';
 
-                    $exam_data .= '<a class="dropdown-item" href="#">Add/Edit Question</a>';
-                    $exam_data .= '<a class="dropdown-item" href="#">Edit Exam</a>';
-                    $exam_data .= ' <a class="dropdown-item" href="#">Delete Exam</a>';
+                $exam_data .= '<a class="dropdown-item" style="cursor:pointer;">Add/Edit Question</a>';
+                $exam_data .= '<a class="dropdown-item" style="cursor:pointer;" data-toggle="modal" data-target=".edit_exam_modal" onclick="editExam(' . $exam->id . ')">Edit Exam</a>';
+                $exam_data .= ' <a class="dropdown-item" href="#" style="cursor:pointer;" data-toggle="modal" data-target=".delete_exam_modal" onclick="deleteExam(' . $exam->id . ')">Delete Exam</a>';
 
                 $exam_data .= '</div></div></div>';
 
@@ -105,5 +106,105 @@ class ExamController extends Controller
             ';
         }
         return $exam_data;
+    }
+
+    public function saveExam(Request $request)
+    {
+        try {
+            $exam = new Exam();
+            $exam->exam_name = $request->exam_name;
+            $exam->exam_duration = $request->exam_duration;
+            $exam->instruction = $request->instruction;
+            $exam->no_of_attempts = $request->no_of_attempts;
+            $exam->exam_due_date = (!empty($request->exam_due_date)) ? date('Y-m-d H:i:s', strtotime($request->exam_due_date)) : null;
+            $exam->exam_start_date = (!empty($request->exam_start_date)) ? date('Y-m-d H:i:s', strtotime($request->exam_start_date)) : null;
+            $exam->exam_end_date = (!empty($request->exam_end_date)) ? date('Y-m-d H:i:s', strtotime($request->exam_end_date)) : null;
+            $exam->exam_created_by = Auth::user()->id;
+            $exam->is_published = $request->is_published;
+            $exam->result_display = $request->result_display;
+            $message_data = "Exam Saved Successfully!";
+            $new_exam_id = $exam->id;
+            if ($exam->save()) {
+                $exams = Exam::where('exam_created_by', Auth::user()->id)->where('status', ExamEnum::ACTIVE)->orderBy('id', 'desc')->orderBy('is_published', 'desc')->get();
+                $data_generate = $this->examHtmlGenerate($exams);
+                return response()->json(array('success' => true, 'data_generate' => $data_generate, 'message' => $message_data, 'new_exam_id' => $new_exam_id));
+            } else {
+                return response()->json(array('success' => false, 'message' => 'Error! Exam Not Added.'));
+            }
+        } catch (Exception $error) {
+            Log::info('saveExam => Backend Error');
+            Log::info($error->getMessage());
+            dd($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+        }
+    }
+
+    public function getExamDataWithExamId(Request $request)
+    {
+        try {
+            $exam_id = $request->exam_id;
+            $exam = Exam::findOrFail($exam_id);
+            if (!empty($exam)) {
+                return response()->json(array(
+                    'success' => true,
+                    'exam' => $exam,
+                ));
+            } else {
+                return response()->json(array('success' => false, 'message' => 'Error! No Data Found.'));
+            }
+        } catch (Exception $error) {
+            Log::info('getExamDataWithExamId => Backend Error');
+            Log::info($error->getMessage());
+            dd($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later');
+        }
+    }
+
+    public function updateExam(Request $request)
+    {
+        try {
+            $exam = Exam::findOrFail($request->exam_input_edit_id);
+            $exam->exam_name = $request->exam_name;
+            $exam->exam_duration = $request->exam_duration;
+            $exam->instruction = $request->instruction;
+            $exam->no_of_attempts = $request->no_of_attempts;
+            $exam->exam_due_date = (!empty($request->exam_due_date)) ? date('Y-m-d H:i:s', strtotime($request->exam_due_date)) : null;
+            $exam->exam_start_date = (!empty($request->exam_start_date)) ? date('Y-m-d H:i:s', strtotime($request->exam_start_date)) : null;
+            $exam->exam_end_date = (!empty($request->exam_end_date)) ? date('Y-m-d H:i:s', strtotime($request->exam_end_date)) : null;
+            $exam->exam_created_by = Auth::user()->id;
+            $exam->is_published = $request->is_published;
+            $exam->result_display = $request->result_display;
+            $message_data = "Exam Updated Successfully!";
+            if ($exam->save()) {
+                $exams = Exam::where('exam_created_by', Auth::user()->id)->where('status', ExamEnum::ACTIVE)->orderBy('id', 'desc')->orderBy('is_published', 'desc')->get();
+                $data_generate = $this->examHtmlGenerate($exams);
+                return response()->json(array('success' => true, 'data_generate' => $data_generate, 'message' => $message_data));
+            } else {
+                return response()->json(array('success' => false, 'message' => 'Error! Exam Not Updated.'));
+            }
+        } catch (Exception $error) {
+            Log::info('updateExam => Backend Error');
+            Log::info($error->getMessage());
+            dd($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+        }
+    }
+
+    public function deleteExam(Request $request)
+    {
+        try {
+            $exam_data = Exam::findorfail($request->delete_exam_id);
+            $exam_data->status = ExamEnum::INACTIVE;
+            $exam_data->save();
+            $exams = Exam::where('exam_created_by', Auth::user()->id)->where('status', ExamEnum::ACTIVE)->orderBy('id', 'desc')->orderBy('is_published', 'desc')->get();
+            $data_generate = $this->examHtmlGenerate($exams);
+            return response()->json(array('success' => true, 'data_generate' => $data_generate, 'message' => 'Exam Deleted successfully!'));
+            //return redirect()->back()->with('TOASTR_MESSAGE', MessageTypeEnum::SUCCESS . trans('Deleted successfully!'));
+        } catch (Exception $error) {
+            Log::info('deleteExam => Backend Error');
+            Log::info($error->getMessage());
+            dd($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+        }
     }
 }

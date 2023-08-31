@@ -12,4 +12,7 @@ class ExamEnum extends Controller
 
     const AUTOMATIC_EVALUATION = 1;
     const MANUAL_EVALUATION = 2;
+
+    const INACTIVE = 0;
+    const ACTIVE = 1;
 }

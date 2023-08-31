@@ -39,6 +39,10 @@ Route::group(['prefix' => 'admin'], function () {
         /* exam module */
         Route::get('/exams', [ExamController::class, 'getExams'])->name('getExams');
         Route::any('/show-exams', [ExamController::class, 'showExams'])->name('showExams');
+        Route::post('/save-exam', [ExamController::class, 'saveExam'])->name('saveExam');
+        Route::post('/get-exam-data', [ExamController::class, 'getExamDataWithExamId'])->name('getExamDataWithExamId');
+        Route::post('/update-exam', [ExamController::class, 'updateExam'])->name('updateExam');
+        Route::post('/delete-exam', [ExamController::class, 'deleteExam'])->name('deleteExam');
         /* exam module */
     });
 });

@@ -39,7 +39,7 @@
 
     {{-- Add Exam Modal --}}
     <div class="modal fade add_exam_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
-        aria-hidden="true">
+        aria-hidden="true" id="add_exam_modal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -48,84 +48,214 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form method="post">
+                <form method="post" action="{{ route('saveExam') }}">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="exam_name" class="col-form-label">Exam name</label>
+                            <label class="col-form-label">Exam name</label>
                             <input type="text" class="form-control exam_name" name="exam_name" placeholder="Exam name">
                         </div>
                         <div class="form-group">
-                            <label for="instruction" class="col-form-label">Instructions</label>
+                            <label class="col-form-label">Instructions</label>
                             <textarea class="form-control instruction" name="instruction" id="" cols="30" rows="5"
                                 placeholder="Instructions"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="exam_duration" class="col-form-label">Duration(In minutes)</label>
+                            <label class="col-form-label">Duration(In minutes)</label>
                             <input type="text" class="form-control exam_duration" name="exam_duration"
                                 placeholder="Duration(In minutes)">
                         </div>
                         <div class="form-group">
-                            <label for="no_of_attempts" class="col-form-label">Maximum no. of attempts</label>
+                            <label class="col-form-label">Maximum no. of attempts</label>
                             <input type="text" class="form-control no_of_attempts" name="no_of_attempts"
                                 placeholder="Maximum no. of attempts">
                         </div>
                         <div class="form-group">
-                            <label for="exam_start_date" class="col-form-label">Start date</label>
+                            <label class="col-form-label">Start date</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control exam_start_date" name="exam_start_date" placeholder="Start date" aria-label="Start date"
-                                    aria-describedby="Start-date">
-                                <div class="input-group-append">
-                                    <span class="input-group-text" id="Start-date"><i class="fas fa-calendar"></i></span>
-                                </div>
+                                <input type="datetime-local" class="form-control exam_start_date" name="exam_start_date"
+                                    placeholder="Start date" aria-label="Start date" aria-describedby="Start-date">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="exam_end_date" class="col-form-label">End date</label>
+                            <label class="col-form-label">End date</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control exam_end_date" name="exam_end_date" placeholder="End date" aria-label="End date"
-                                    aria-describedby="End-date">
-                                <div class="input-group-append">
-                                    <span class="input-group-text" id="End-date"><i class="fas fa-calendar"></i></span>
-                                </div>
+                                <input type="datetime-local" class="form-control exam_end_date" name="exam_end_date"
+                                    placeholder="End date" aria-label="End date" aria-describedby="End-date">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="exam_due_date" class="col-form-label">Due date</label>
+                            <label class="col-form-label">Due date</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control exam_due_date" name="exam_due_date" placeholder="Due date" aria-label="Due date"
-                                    aria-describedby="Due-date">
-                                <div class="input-group-append">
-                                    <span class="input-group-text" id="Due-date"><i class="fas fa-calendar"></i></span>
-                                </div>
+                                <input type="datetime-local" class="form-control exam_due_date" name="exam_due_date"
+                                    placeholder="Due date" aria-label="Due date" aria-describedby="Due-date">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label for="result_display" class="col-form-label">Result display</label>
-                            <select name="result_display" class="form-control result_display">
-                                <option value="{{ \App\Http\Controllers\Enum\ExamEnum::AUTOMATIC_EVALUATION }}" selected>
-                                    Automatic Evaluation</option>
-                                <option value="{{ \App\Http\Controllers\Enum\ExamEnum::MANUAL_EVALUATION }}">Manual
-                                    Evaluation</option>
-                            </select>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="result_display1" name="result_display"
+                                    class="custom-control-input result_display"
+                                    value="{{ \App\Http\Controllers\Enum\ExamEnum::AUTOMATIC_EVALUATION }}" checked>
+                                <label class="custom-control-label" for="result_display1">Automatic Evaluation</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="result_display2" name="result_display"
+                                    class="custom-control-input result_display"
+                                    value="{{ \App\Http\Controllers\Enum\ExamEnum::MANUAL_EVALUATION }}">
+                                <label class="custom-control-label" for="result_display2">Manual Evaluation</label>
+                            </div>
                         </div>
                         <div class="form-group">
-                            <label for="is_published" class="col-form-label">Publish/Unpublish</label>
-                            <select name="is_published" class="form-control is_published">
-                                <option value="{{ \App\Http\Controllers\Enum\ExamEnum::PUBLISHED }}" selected>
-                                    Publish</option>
-                                <option value="{{ \App\Http\Controllers\Enum\ExamEnum::UNPUBLISHED }}">Unpublish</option>
-                            </select>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="is_published1" name="is_published"
+                                    class="custom-control-input is_published"
+                                    value="{{ \App\Http\Controllers\Enum\ExamEnum::PUBLISHED }}" checked>
+                                <label class="custom-control-label" for="is_published1">Publish</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="is_published2" name="is_published"
+                                    class="custom-control-input is_published"
+                                    value="{{ \App\Http\Controllers\Enum\ExamEnum::UNPUBLISHED }}">
+                                <label class="custom-control-label" for="is_published2">Unpublish</label>
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save exam</button>
+                        <input type="hidden" class="form-control exam_input_id" id="exam_input_id"
+                            name="exam_input_id">
+                        <button type="button" class="btn btn-secondary resetAddExamModal"
+                            data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="save_exam_button">Save exam</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
     {{-- Add Exam Modal --}}
+
+    {{-- Edit Exam Modal --}}
+    <div class="modal fade edit_exam_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true" id="edit_exam_modal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Update Exam</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form method="post" action="{{ route('updateExam') }}">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label class="col-form-label">Exam name</label>
+                            <input type="text" class="form-control" name="exam_name" id="exam_name"
+                                placeholder="Exam name">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Instructions</label>
+                            <textarea class="form-control" name="instruction" id="instruction" cols="30" rows="5"
+                                placeholder="Instructions"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Duration(In minutes)</label>
+                            <input type="text" class="form-control" name="exam_duration" id="exam_duration"
+                                placeholder="Duration(In minutes)">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Maximum no. of attempts</label>
+                            <input type="text" class="form-control" name="no_of_attempts" id="no_of_attempts"
+                                placeholder="Maximum no. of attempts">
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Start date</label>
+                            <div class="input-group mb-3">
+                                <input type="datetime-local" class="form-control" name="exam_start_date"
+                                    id="exam_start_date" placeholder="Start date" aria-label="Start date"
+                                    aria-describedby="Start-date">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">End date</label>
+                            <div class="input-group mb-3">
+                                <input type="datetime-local" class="form-control" name="exam_end_date"
+                                    id="exam_end_date" placeholder="End date" aria-label="End date"
+                                    aria-describedby="End-date">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label">Due date</label>
+                            <div class="input-group mb-3">
+                                <input type="datetime-local" class="form-control" name="exam_due_date"
+                                    id="exam_due_date" placeholder="Due date" aria-label="Due date"
+                                    aria-describedby="Due-date">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="result_edit_display1" name="result_display_edit"
+                                    class="custom-control-input"
+                                    value="{{ \App\Http\Controllers\Enum\ExamEnum::AUTOMATIC_EVALUATION }}" checked>
+                                <label class="custom-control-label" for="result_edit_display1">Automatic
+                                    Evaluation</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="result_edit_display2" name="result_display_edit"
+                                    class="custom-control-input"
+                                    value="{{ \App\Http\Controllers\Enum\ExamEnum::MANUAL_EVALUATION }}">
+                                <label class="custom-control-label" for="result_edit_display2">Manual Evaluation</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="is_edit_published1" name="is_published_edit"
+                                    class="custom-control-input"
+                                    value="{{ \App\Http\Controllers\Enum\ExamEnum::PUBLISHED }}" checked>
+                                <label class="custom-control-label" for="is_edit_published1">Publish</label>
+                            </div>
+                            <div class="custom-control custom-radio custom-control-inline">
+                                <input type="radio" id="is_edit_published2" name="is_published_edit"
+                                    class="custom-control-input"
+                                    value="{{ \App\Http\Controllers\Enum\ExamEnum::UNPUBLISHED }}">
+                                <label class="custom-control-label" for="is_edit_published2">Unpublish</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <input type="hidden" class="form-control" id="exam_input_edit_id" name="exam_input_edit_id">
+                        <button type="button" class="btn btn-secondary resetEditExamModal"
+                            data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="edit_exam_button">Update exam</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- Edit Exam Modal --}}
+
+    {{-- delete exam modal --}}
+    <div class="modal fade delete_exam_modal" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to delete?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <form id="delete_exam_modal_form" class="form" action="{{ route('deleteExam') }}" method="post">
+                    <div class="modal-body">
+                        Are you sure? You want to delete this exam!
+                        <input type="hidden" id="delete_exam_id" class="form-control form-control-solid">
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeDeleteExamModal">Cancel</button>
+                        <button class="btn btn-primary" id="delete_exam_button">Yes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {{-- delete exam modal --}}
 @stop
 
 @section('custom_scripts')
