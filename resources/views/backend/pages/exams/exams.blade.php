@@ -61,12 +61,12 @@
                         </div>
                         <div class="form-group">
                             <label class="col-form-label">Duration(In minutes)</label>
-                            <input type="text" class="form-control exam_duration" name="exam_duration"
+                            <input type="number" class="form-control exam_duration" name="exam_duration"
                                 placeholder="Duration(In minutes)">
                         </div>
                         <div class="form-group">
                             <label class="col-form-label">Maximum no. of attempts</label>
-                            <input type="text" class="form-control no_of_attempts" name="no_of_attempts"
+                            <input type="number" class="form-control no_of_attempts" name="no_of_attempts"
                                 placeholder="Maximum no. of attempts">
                         </div>
                         <div class="form-group">
@@ -157,12 +157,12 @@
                         </div>
                         <div class="form-group">
                             <label class="col-form-label">Duration(In minutes)</label>
-                            <input type="text" class="form-control" name="exam_duration" id="exam_duration"
+                            <input type="number" class="form-control" name="exam_duration" id="exam_duration"
                                 placeholder="Duration(In minutes)">
                         </div>
                         <div class="form-group">
                             <label class="col-form-label">Maximum no. of attempts</label>
-                            <input type="text" class="form-control" name="no_of_attempts" id="no_of_attempts"
+                            <input type="number" class="form-control" name="no_of_attempts" id="no_of_attempts"
                                 placeholder="Maximum no. of attempts">
                         </div>
                         <div class="form-group">
