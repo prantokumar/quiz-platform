@@ -3,12 +3,12 @@
     function showExams() {
         $('.loading_image').css('display', 'block');
         $.ajax({
-            url: '{{ route('showExams') }}',
-            method: 'post',
-            data: {
-                "_token": "{{ csrf_token() }}",
-            },
-            success: function(data) {
+            url: '{{ route('showExams') }}'
+            , method: 'post'
+            , data: {
+                "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
                 $("#show-exams").html(data.data_generate_for_exams);
                 $('.loading_image').css('display', 'none');
             }
@@ -17,6 +17,7 @@
     $(document).ready(function() {
         showExams();
     });
+
 </script>
 {{-- show exams --}}
 
@@ -57,22 +58,22 @@
         }
 
         $.ajax({
-            type: 'POST',
-            url: '{{ route('saveExam') }}',
-            data: {
-                'exam_input_id': exam_input_id,
-                'exam_name': exam_name,
-                'instruction': instruction,
-                'exam_duration': exam_duration,
-                'no_of_attempts': no_of_attempts,
-                'exam_due_date': exam_due_date,
-                'exam_start_date': exam_start_date,
-                'exam_end_date': exam_end_date,
-                'result_display': result_display,
-                'is_published': is_published,
-                "_token": "{{ csrf_token() }}",
-            },
-            success: function(data) {
+            type: 'POST'
+            , url: '{{ route('saveExam') }}'
+            , data: {
+                'exam_input_id': exam_input_id
+                , 'exam_name': exam_name
+                , 'instruction': instruction
+                , 'exam_duration': exam_duration
+                , 'no_of_attempts': no_of_attempts
+                , 'exam_due_date': exam_due_date
+                , 'exam_start_date': exam_start_date
+                , 'exam_end_date': exam_end_date
+                , 'result_display': result_display
+                , 'is_published': is_published
+                , "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
                 if (data.success) {
                     showExams();
                     toastr.success(data.message);
@@ -80,9 +81,10 @@
                 } else {
                     toastr.error("Something went wrong! Please try again later.");
                 }
-            },
-        });
+            }
+        , });
     });
+
 </script>
 {{-- save exam --}}
 
@@ -91,13 +93,13 @@
 <script>
     function editExam(examID) {
         $.ajax({
-            type: 'POST',
-            url: '{{ route('getExamDataWithExamId') }}',
-            data: {
-                'exam_id': examID,
-                "_token": "{{ csrf_token() }}",
-            },
-            success: function(data) {
+            type: 'POST'
+            , url: '{{ route('getExamDataWithExamId') }}'
+            , data: {
+                'exam_id': examID
+                , "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
                 if (data.success) {
                     $('#instruction').val(data.exam.instruction);
                     $('#exam_due_date').val(data.exam.exam_due_date);
@@ -107,13 +109,13 @@
                     $('#exam_input_edit_id').val(data.exam.id);
                     $('#exam_duration').val(data.exam.exam_duration);
                     $('#no_of_attempts').val(data.exam.no_of_attempts);
-                    $('input:radio[name=result_display]').filter('[value=' + data.exam.result_display + ']')
+                    $('input:radio[name=result_display_edit]').filter('[value=' + data.exam.result_display + ']')
                         .prop('checked', true);
-                    $('input:radio[name=is_published]').filter('[value=' + data.exam.is_published + ']')
+                    $('input:radio[name=is_published_edit]').filter('[value=' + data.exam.is_published + ']')
                         .prop('checked', true);
                 }
-            },
-        });
+            }
+        , });
     }
     /* update assignment */
     $('#edit_exam_button').on('click', function(e) {
@@ -152,22 +154,22 @@
         }
 
         $.ajax({
-            type: 'POST',
-            url: '{{ route('updateExam') }}',
-            data: {
-                'exam_input_edit_id': exam_input_edit_id,
-                'exam_name': exam_name,
-                'instruction': instruction,
-                'exam_duration': exam_duration,
-                'no_of_attempts': no_of_attempts,
-                'exam_due_date': exam_due_date,
-                'exam_start_date': exam_start_date,
-                'exam_end_date': exam_end_date,
-                'result_display': result_display,
-                'is_published': is_published,
-                "_token": "{{ csrf_token() }}",
-            },
-            success: function(data) {
+            type: 'POST'
+            , url: '{{ route('updateExam') }}'
+            , data: {
+                'exam_input_edit_id': exam_input_edit_id
+                , 'exam_name': exam_name
+                , 'instruction': instruction
+                , 'exam_duration': exam_duration
+                , 'no_of_attempts': no_of_attempts
+                , 'exam_due_date': exam_due_date
+                , 'exam_start_date': exam_start_date
+                , 'exam_end_date': exam_end_date
+                , 'result_display': result_display
+                , 'is_published': is_published
+                , "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
                 if (data.success) {
                     showExams();
                     toastr.success(data.message);
@@ -175,10 +177,11 @@
                 } else {
                     toastr.error("Something went wrong! Please try again later.");
                 }
-            },
-        });
+            }
+        , });
     });
     /* update assignment */
+
 </script>
 {{-- update exam data --}}
 
@@ -186,30 +189,30 @@
 <script>
     function deleteExam(examID) {
         $.ajax({
-            type: 'POST',
-            url: '{{ route('getExamDataWithExamId') }}',
-            data: {
-                'exam_id': examID,
-                "_token": "{{ csrf_token() }}",
-            },
-            success: function(data) {
+            type: 'POST'
+            , url: '{{ route('getExamDataWithExamId') }}'
+            , data: {
+                'exam_id': examID
+                , "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
                 if (data.success) {
                     $('#delete_exam_id').val(data.exam.id);
                 }
-            },
-        });
+            }
+        , });
     }
     $('#delete_exam_button').on('click', function(e) {
         e.preventDefault();
         var delete_exam_id = $('#delete_exam_id').val();
         $.ajax({
-            type: 'POST',
-            url: '{{ route('deleteExam') }}',
-            data: {
-                'delete_exam_id': delete_exam_id,
-                "_token": "{{ csrf_token() }}",
-            },
-            success: function(data) {
+            type: 'POST'
+            , url: '{{ route('deleteExam') }}'
+            , data: {
+                'delete_exam_id': delete_exam_id
+                , "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
                 if (data.success) {
                     showExams();
                     $('#closeDeleteExamModal').trigger("click");
@@ -217,9 +220,10 @@
                 } else {
                     toastr.error("Something went wrong! Please try again later.");
                 }
-            },
-        });
+            }
+        , });
     });
+
 </script>
 {{-- delete exam --}}
 
@@ -234,6 +238,7 @@
         $('.exam_start_date').val("");
         $('.exam_end_date').val("");
     });
+
 </script>
 {{-- reset add exam modal --}}
 
@@ -248,27 +253,61 @@
         $('.exam_start_date').val("");
         $('.exam_end_date').val("");
     });
+
 </script>
 {{-- reset edit exam modal --}}
 
 {{-- question area --}}
 {{-- add/edit question modal open  --}}
 <script>
-    function addOrEditQuestions(examID) {
+    function addQuestions(examID) {
         $.ajax({
-            type: 'POST',
-            url: '{{ route('getExamDataWithExamId') }}',
-            data: {
-                'exam_id': examID,
-                "_token": "{{ csrf_token() }}",
-            },
-            success: function(data) {
+            type: 'POST'
+            , url: '{{ route('getExamDataWithExamId') }}'
+            , data: {
+                'exam_id': examID
+                , "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
                 if (data.success) {
                     $('#exam_id').val(data.exam.id);
                 }
-            },
-        });
+            }
+        , });
     }
+    $("#save_question_button").click(function(e) {
+        e.preventDefault();
+        var title = $("#title").val();
+        var marks = $("#marks").val();
+        var isCorrectChecked = $("input[name='is_correct[]']:checked").length > 0;
+        var answerFilled = true;
+        $("input[name='answer[]']").each(function() {
+            if ($(this).val().trim() === "") {
+                answerFilled = false;
+                return false;
+            }
+        });
+
+        if (title === "") {
+            toastr.error('Please enter a question title');
+        }
+        else if (marks === "") {
+            toastr.error('Please enter marks for the question');
+        }
+        else if (!answerFilled) {
+            toastr.error('Please fill in all answer fields');
+        }
+        else if(!isCorrectChecked) {
+            toastr.error('Please select one of the options as correct');
+        }else{
+
+        }
+
+        if (title !== "" && marks !== "" && isCorrectChecked && answerFilled) {
+            toastr.success('Question added successfully');
+        }
+    });
+
 </script>
 {{-- add/edit question modal open  --}}
 

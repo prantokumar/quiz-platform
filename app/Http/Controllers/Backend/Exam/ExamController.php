@@ -99,7 +99,7 @@ class ExamController extends Controller
                             <div class="dropdown-menu">';
                 $subbmission_count = ExamSubmission::submissionCount($exam->id);
                 if ($subbmission_count <= 0) {
-                    $exam_data .= '<a class="dropdown-item" style="cursor:pointer;" data-toggle="modal" data-target="#add_edit_question_area_modal" onclick="addOrEditQuestions(' . $exam->id . ')">Add/Edit Question</a>';
+                    $exam_data .= '<a class="dropdown-item" style="cursor:pointer;" data-toggle="modal" data-target="#add_question_area_modal" onclick="addQuestions(' . $exam->id . ')">Add Question</a>';
                 }
                 $exam_data .= '<a class="dropdown-item" style="cursor:pointer;" data-toggle="modal" data-target=".edit_exam_modal" onclick="editExam(' . $exam->id . ')">Edit Exam</a>';
                 $exam_data .= ' <a class="dropdown-item" href="#" style="cursor:pointer;" data-toggle="modal" data-target=".delete_exam_modal" onclick="deleteExam(' . $exam->id . ')">Delete Exam</a>';
@@ -277,4 +277,5 @@ class ExamController extends Controller
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
         }
     }
+
 }
