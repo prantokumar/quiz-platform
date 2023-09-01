@@ -81,7 +81,7 @@ class ExamController extends Controller
                 $exam_data .= '<div class="exam_infos">';
                 $question_count = Question::examTotalQuestionCount($exam->id);
                 if ($question_count > 0) {
-                    $exam_data .= '<span class="badge badge-pill badge-primary">Questions : ' . $question_count . '</span>';
+                    $exam_data .= '<span class="badge badge-pill badge-primary" style="cursor:pointer;" data-toggle="modal" data-target="#view_questions_area_modal" onclick="viewQuestions(' . $exam->id . ')";>Questions : ' . $question_count . '</span>';
                 } else {
                     $exam_data .= '<span class="badge badge-pill badge-primary">Questions : 0</span>';
                 }

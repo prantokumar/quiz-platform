@@ -8,6 +8,21 @@
         height: 40px !important;
     }
 
+    .wrong-answer {
+        width: 16px;
+        height: 16px;
+        border: 1px solid black;
+        border-radius: 50%;
+    }
+
+    .correct-answer {
+        width: 16px;
+        height: 16px;
+        border: 1px solid green;
+        background: green;
+        border-radius: 50%;
+    }
+
 </style>
 @stop
 
@@ -230,7 +245,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form>
+            <form method="post" action="{{ route('addQuestionToExam') }}">
                 <input type="hidden" id="exam_id" class="form-control form-control-solid">
                 <div class="modal-body">
                     <div class="form-row">
@@ -293,6 +308,47 @@
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeAddExamModal">Cancel</button>
                     <button class="btn btn-primary" id="save_question_button">Add question</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{-- question add/edit full screen modal --}}
+
+{{-- question add full screen modal --}}
+<div class="modal fade" id="view_questions_area_modal" tabindex="-1" role="dialog" aria-labelledby="fullscreenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fullscreenModalLabel">Questions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="{{ route('addQuestionToExam') }}">
+                <input type="hidden" id="view_question_exam_id" class="form-control form-control-solid">
+                <div class="modal-body">
+
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">1. Question title</h4>
+                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target=".edit_question_modal">Edit</button>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 d-flex justify-content-left align-items-center">
+                                    <span class="correct-answer"></span>
+                                    <span class="ml-2">Option 1</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <h4>Mark : 0</h4>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeViewQuestionsModal">Close</button>
                 </div>
             </form>
         </div>

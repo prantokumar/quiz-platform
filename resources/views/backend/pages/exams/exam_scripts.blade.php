@@ -362,4 +362,26 @@
 </script>
 {{-- reset add  question area --}}
 
+
+{{-- view exam questions --}}
+<script>
+    function viewQuestions(examID) {
+        $.ajax({
+            type: 'POST'
+            , url: '{{ route('getExamDataWithExamId') }}'
+            , data: {
+                'exam_id': examID
+                , "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
+                if (data.success) {
+                    $('#view_question_exam_id').val(data.exam.id);
+                }
+            }
+        , });
+    }
+    
+</script>
+{{-- view exam questions --}}
+
 {{-- question area --}}
