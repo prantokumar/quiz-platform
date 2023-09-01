@@ -61,7 +61,7 @@ class DashboardController extends Controller
                 $exam_data .= '<div class="exam_infos">';
                 $question_count = Question::examTotalQuestionCount($exam->id);
                 if ($question_count > 0) {
-                    $exam_data .= '<span class="badge badge-pill badge-primary" style="cursor:pointer;" data-toggle="modal" data-target="#view_questions_area_modal" onclick="viewQuestions(' . $exam->id . ')";>Questions : ' . $question_count . '</span>';
+                    $exam_data .= '<span class="badge badge-pill badge-primary">Questions : ' . $question_count . '</span>';
                 } else {
                     $exam_data .= '<span class="badge badge-pill badge-primary">Questions : 0</span>';
                 }
@@ -123,14 +123,18 @@ class DashboardController extends Controller
 
                     $view_exam_questions .= '<div class="card-body">';
                     $view_exam_questions .= '<div class="form-group">';
+                    $view_exam_questions .= '<input type="hidden" name="question_id" class="form-control question_id" value="'.$question_id.'">';
+
+                    $question_radio_name = 'answer_id_' . $question_id;
+
                     foreach ($questions[0]->answers as $option_key => $option) {
                         $view_exam_questions .= '<div class="input-group m-1">';
                         $view_exam_questions .= '<div class="input-group-prepend">';
                         $view_exam_questions .= '<div class="input-group-text">';
-                        $view_exam_questions .= '<input type="radio" name="is_correct_update[]">';
+                        $view_exam_questions .= '<input type="radio" name="' . $question_radio_name . '" data-option-key="'.$option->id.'" class="" value="'.$option->id.'">';
                         $view_exam_questions .= '</div>';
                         $view_exam_questions .= '</div>';
-                        $view_exam_questions .= '<input type="text" name="answer_update[]" class="form-control" value="' . htmlspecialchars($option->answer_details, ENT_QUOTES, 'UTF-8') . '">';
+                        $view_exam_questions .= '<input type="text" class="form-control" disabled value="' . htmlspecialchars($option->answer_details, ENT_QUOTES, 'UTF-8') . '">';
                         $view_exam_questions .= '</div>';
                     }
                     $view_exam_questions .= '</div>';

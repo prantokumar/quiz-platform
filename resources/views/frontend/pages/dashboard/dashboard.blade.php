@@ -37,6 +37,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeViewQuestionsModal">Close</button>
+                    <button type="button" class="btn btn-primary" id="submit_exam_button">Save exam</button>
                 </div>
             </form>
         </div>
