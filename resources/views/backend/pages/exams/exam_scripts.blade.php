@@ -223,7 +223,6 @@
             }
         , });
     });
-
 </script>
 {{-- delete exam --}}
 
@@ -475,5 +474,37 @@
 </script>
 {{-- update question area --}}
 
+{{-- delete question area --}}
+<script>
+    function deleteQuestions(examID, questionID) {
+        $('#delete_question_id').val(questionID);
+        $('#get_exam_id').val(examID);
+    }
+    $('#delete_question_button').on('click', function(e) {
+        e.preventDefault();
+        let delete_question_id = $('#delete_question_id').val();
+        let get_exam_id = $('#get_exam_id').val();
+        $.ajax({
+            type: 'POST'
+            , url: '{{ route('deleteExamQuestion') }}'
+            , data: {
+                'delete_question_id': delete_question_id
+                ,'exam_id': get_exam_id
+                , "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
+                if (data.success) {
+                    showExams();
+                    $('#closeDeleteQuestionModal').trigger("click");
+                    toastr.success(data.message);
+                    viewQuestions(data.exam_id);
+                } else {
+                    toastr.error("Something went wrong! Please try again later.");
+                }
+            }
+        , });
+    });
+</script>
+{{-- delete question area --}}
 
 {{-- question area --}}

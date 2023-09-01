@@ -339,7 +339,6 @@
 </div>
 {{-- question view screen modal --}}
 
-
 {{-- question edit full screen modal --}}
 <div class="modal fade edit_question_modal" tabindex="-1" role="dialog" aria-labelledby="fullscreenModalLabel" aria-hidden="true" data-backdrop="false">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -365,6 +364,32 @@
     </div>
 </div>
 {{-- question edit full screen modal --}}
+
+{{-- delete question modal --}}
+<div class="modal fade delete_question_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to delete?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form id="delete_question_modal_form" class="form" action="{{ route('deleteExamQuestion') }}" method="post">
+                <div class="modal-body">
+                    Are you sure? You want to delete this question!
+                    <input type="hidden" id="delete_question_id" class="form-control form-control-solid">
+                    <input type="hidden" id="get_exam_id" class="form-control form-control-solid">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeDeleteQuestionModal">Cancel</button>
+                    <button class="btn btn-primary" id="delete_question_button">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{-- delete question modal --}}
 @stop
 
 @section('custom_scripts')

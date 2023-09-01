@@ -276,7 +276,7 @@ class ExamController extends Controller
             if (isset($exam_questions[0])) {
                 foreach ($exam_questions as $key => $exam_question) {
                     $question_id = $exam_question->question_id;
-                    $questions = Question::with(['answers'])->where('id', $question_id)->get();
+                    $questions = Question::with(['answers'])->where('id', $question_id)->where('status', 1)->get();
                     $view_exam_questions .= '<div class="card mt-2">';
 
                     $view_exam_questions .= '<div class="card-header d-flex justify-content-between align-items-center">';
@@ -305,7 +305,10 @@ class ExamController extends Controller
                     $view_exam_questions .= '</div>';
 
                     $view_exam_questions .= '<div class="modal-footer d-flex justify-content-between align-items-center">';
+                    $view_exam_questions .= '<div>';
                     $view_exam_questions .= '<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".edit_question_modal" onclick="updateQuestions(' . $exam_id . ', ' . $question_id . ')";>Edit</button>';
+                    $view_exam_questions .= '<button type="button" class="btn btn-danger btn-sm ml-2" data-toggle="modal" data-target=".delete_question_modal" onclick="deleteQuestions(' . $exam_id . ', ' . $question_id . ')";>Delete</button>';
+                    $view_exam_questions .= '</div>';
                     $view_exam_questions .= '<h4>Mark : ' . $questions[0]->marks . '</h4>';
                     $view_exam_questions .= '</div>';
 
@@ -439,6 +442,22 @@ class ExamController extends Controller
             DB::rollback();
             Log::info('updateExamQuestion => Backend Error');
             Log::info($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+        }
+    }
+
+    public function deleteExamQuestion(Request $request)
+    {
+        try {
+            $exam_id = $request->exam_id;
+            $question_data = Question::findorfail($request->delete_question_id);
+            $question_data->delete();
+            return response()->json(array('success' => true, 'exam_id' => $exam_id, 'message' => 'Question Deleted successfully!'));
+            //return redirect()->back()->with('TOASTR_MESSAGE', MessageTypeEnum::SUCCESS . trans('Deleted successfully!'));
+        } catch (Exception $error) {
+            Log::info('deleteExam => Backend Error');
+            Log::info($error->getMessage());
+            dd($error->getMessage());
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
         }
     }
