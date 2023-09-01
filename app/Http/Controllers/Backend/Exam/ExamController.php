@@ -256,7 +256,7 @@ class ExamController extends Controller
                 }
             } else {
                 DB::rollback();
-                return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+                return response()->json(array('success' => false));
             }
         } catch (Exception $error) {
             DB::rollback();
@@ -305,7 +305,7 @@ class ExamController extends Controller
                     $view_exam_questions .= '</div>';
 
                     $view_exam_questions .= '<div class="modal-footer d-flex justify-content-between align-items-center">';
-                    $view_exam_questions .= '<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".edit_question_modal" onclick="updateQuestions(' . $exam_id . ', ' . $question_id . ')";>Edit</button>';
+                    $view_exam_questions .= '<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".edit_question_modal" onclick="updateQuestions(' . $exam_id . ', ' . $question_id . ')";>Edit</button>';
                     $view_exam_questions .= '<h4>Mark : ' . $questions[0]->marks . '</h4>';
                     $view_exam_questions .= '</div>';
 
@@ -332,20 +332,66 @@ class ExamController extends Controller
         }
     }
 
-    public function updateExamQuestions(Request $request)
+    public function updateExamQuestionModalShow(Request $request)
     {
         try {
             $exam_id = $request->exam_id;
             $question_id = $request->question_id;
             $view_question_for_update = '';
-            $exam_question = ExamQuestion::where('exam_id', $exam_id)->first();
+            $exam_question = ExamQuestion::where('exam_id', $exam_id)->where('question_id', $question_id)->first();
             $i = 1;
             if (isset($exam_question)) {
-                return response()->json(array('exam_id' => $exam_id, 'question_id' => $question_id,'view_question_for_update' => $view_question_for_update));
+                $question_id = $exam_question->question_id;
+                $question = Question::with(['answers'])->where('id', $question_id)->first();
+                $view_question_for_update .= '<div class="form-row">';
+
+                $view_question_for_update .= '<div class="col">';
+                $view_question_for_update .= '<div class="form-group">';
+                $view_question_for_update .= '<label class="col-form-label">Question title<sup class="text-danger font-weight-bold">*</sup></label>';
+                $view_question_for_update .= '<input type="text" class="form-control title" name="title" value="' . htmlspecialchars($question->title, ENT_QUOTES, 'UTF-8') . '">';
+                $view_question_for_update .= '</div>';
+                $view_question_for_update .= '</div>';
+                $view_question_for_update .= '<div class="col">';
+                $view_question_for_update .= '<div class="form-group">';
+                $view_question_for_update .= '<label class="col-form-label">Mark<sup class="text-danger font-weight-bold">*</sup></label>';
+                $view_question_for_update .= '<input type="text" class="form-control mark" name="mark" value="' . $question->marks . '">';
+                $view_question_for_update .= '</div>';
+                $view_question_for_update .= '</div>';
+
+                $view_question_for_update .= '</div>';
+
+                $view_question_for_update .= '<div class="form-row">';
+
+                $view_question_for_update .= '<div class="col">';
+                $view_question_for_update .= '<div class="form-group">';
+                $view_question_for_update .= '<label class="col-form-label">Description</label>';
+                $view_question_for_update .= '<textarea class="form-control description" name="description" cols="30" rows="5" placeholder="description">' . $question->description . '</textarea>';
+                $view_question_for_update .= '</div>';
+                $view_question_for_update .= '</div>';
+
+                $view_question_for_update .= '</div>';
+
+                $view_question_for_update .= '<div class="form-group">';
+                foreach ($question->answers as $option_key => $option) {
+                    $view_question_for_update .= '<div class="input-group m-1">';
+                    $view_question_for_update .= '<div class="input-group-prepend">';
+                    $view_question_for_update .= '<div class="input-group-text">';
+                    $view_question_for_update .= '<input type="radio" name="is_correct_update[]"';
+                    ($option->is_correct == ExamEnum::CORRECT_ANSWER) ? $view_question_for_update .= 'checked' : '';
+                    $view_question_for_update .= ' >';
+                    $view_question_for_update .= '</div>';
+                    $view_question_for_update .= '</div>';
+                    $view_question_for_update .= '<input type="text" name="answer_update[]" class="form-control" value="' . htmlspecialchars($option->answer_details, ENT_QUOTES, 'UTF-8') . '">';
+                    $view_question_for_update .= '</div>';
+                }
+                $view_question_for_update .= '</div>';
+
+                $view_question_for_update .= '</div>';
+                return response()->json(array('exam_id' => $exam_id, 'question_id' => $question_id, 'view_question_for_update' => $view_question_for_update));
             } else {
                 $view_question_for_update .= '
                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>Oops!</strong> No questions found!
+                    <strong>Oops!</strong> No question found!
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -353,9 +399,46 @@ class ExamController extends Controller
                ';
             }
         } catch (Exception $error) {
-            Log::info('updateExamQuestions => Backend Error');
+            Log::info('updateExamQuestionModalShow => Backend Error');
             Log::info($error->getMessage());
             dd($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+        }
+    }
+
+    public function updateExamQuestion(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $exam_id = $request->exam_id;
+            $question_id = $request->question_id;
+            $questionUpdate = Question::findOrFail($question_id);
+            $questionUpdate->title = $request->title;
+            $questionUpdate->description = $request->description;
+            $questionUpdate->marks = $request->marks;
+            $questionUpdate->status = 1;
+            if ($questionUpdate->save()) {
+                Answer::where('question_id', $question_id)->delete();
+                $answer_array = $request->myAnswers;
+                foreach ($answer_array as $key => $value) {
+                    $answer_title = $value['ans_title'];
+                    $is_correct = $value['ans_is_correct'];
+                    $answerAdd = new Answer();
+                    $answerAdd->question_id = $question_id;
+                    $answerAdd->answer_details = $answer_title;
+                    $answerAdd->is_correct = $is_correct;
+                    $answerAdd->save();
+                }
+                DB::commit();
+                return response()->json(array('success' => true, 'exam_id' => $exam_id, 'quesion_id' => $question_id));
+            } else {
+                DB::rollback();
+                return response()->json(array('success' => false));
+            }
+        } catch (Exception $error) {
+            DB::rollback();
+            Log::info('updateExamQuestion => Backend Error');
+            Log::info($error->getMessage());
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
         }
     }

@@ -240,7 +240,7 @@
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="fullscreenModalLabel">Add Questions</h5>
+                <h5 class="modal-title" id="fullscreenModalLabel">Add Question</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -257,7 +257,7 @@
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label class="col-form-label">Mark</label>
+                                <label class="col-form-label">Mark<sup class="text-danger font-weight-bold">*</sup></label>
                                 <input type="number" class="form-control" name="marks" id="marks" placeholder="Mark">
                             </div>
                         </div>
@@ -327,7 +327,7 @@
             </div>
             <form method="post" action="{{ route('addQuestionToExam') }}">
                 <input type="hidden" id="view_question_exam_id" class="form-control form-control-solid">
-                <div class="modal-body">
+                <div class="modal-body" style="height: 600px; overflow-y:auto;">
                     <div id="view_questions"></div>
                 </div>
                 <div class="modal-footer">
@@ -342,22 +342,23 @@
 
 {{-- question edit full screen modal --}}
 <div class="modal fade edit_question_modal" tabindex="-1" role="dialog" aria-labelledby="fullscreenModalLabel" aria-hidden="true" data-backdrop="false">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="fullscreenModalLabel">Update Questions</h5>
+                <h5 class="modal-title" id="fullscreenModalLabel">Update Question</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="post" action="{{ route('updateExamQuestions') }}">
-                <input type="text" class="form-control form-control-solid view_question_exam_id_for_edit">
-                <input type="text" class="form-control form-control-solid view_question_id_for_edit">
+            <form method="post" action="{{ route('updateExamQuestionModalShow') }}">
+                <input type="hidden" class="form-control form-control-solid view_question_exam_id_for_edit">
+                <input type="hidden" class="form-control form-control-solid view_question_id_for_edit">
                 <div class="modal-body">
                     <div id="view_questions_for_update"></div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeUpdateQuestionModal">Close</button>
+                    <button class="btn btn-primary" id="update_question_button">Update question</button>
                 </div>
             </form>
         </div>

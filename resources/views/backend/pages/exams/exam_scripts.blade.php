@@ -387,7 +387,7 @@
     function updateQuestions(examID, questionID) {
         $.ajax({
             type: 'POST'
-            , url: '{{ route('updateExamQuestions') }}'
+            , url: '{{ route('updateExamQuestionModalShow') }}'
             , data: {
                 'exam_id': examID
                 ,'question_id': questionID
@@ -396,10 +396,82 @@
             , success: function(data) {
                 $('.view_question_exam_id_for_edit').val(data.exam_id);
                 $('.view_question_id_for_edit').val(data.question_id);
-                $('#view_questions_for_update').html('');
+                $('#view_questions_for_update').html(data.view_question_for_update);
             }
         , });
     }
+    $("#update_question_button").click(function(e) {
+        e.preventDefault();
+        let exam_id = $(".view_question_exam_id_for_edit").val();
+        let question_id = $(".view_question_id_for_edit").val();
+        let title = $(".title").val();
+        let marks = $(".mark").val();
+        let description = $(".description").val();
+        let isCorrectChecked = $("input[name='is_correct_update[]']:checked").length > 0;
+        let myAnswers = [];
+        let check_existing_correct_answer = false;
+        let allAnswersFilled = true;
+
+        $('input[name="is_correct_update[]"]').each(function(index) {
+            let isCorrect = $(this).is(':checked') ? 1 : 0;
+            let answerField = $("input[name='answer_update[]']").eq(index);
+            let answerValue = answerField.val().trim();
+
+            if (isCorrect === 1) {
+                check_existing_correct_answer = true;
+            }
+
+            if (answerValue === "") {
+                allAnswersFilled = false;
+            }
+
+            myAnswers.push({
+                ans_title: answerValue,
+                ans_is_correct: isCorrect,
+            });
+        });
+
+        if (title === "") {
+            toastr.error('Please enter a question title');
+        }
+        else if (marks === "") {
+            toastr.error('Please enter marks for the question');
+        }
+        else if (!allAnswersFilled) {
+            toastr.error('Please fill in all answer fields');
+        }
+        else if (!check_existing_correct_answer) {
+            toastr.error('Please select one of the options as correct');
+        }
+        else {
+        }
+
+        if (title !== "" && marks !== "" && check_existing_correct_answer && allAnswersFilled) {
+            $.ajax({
+                type: 'POST'
+                , url: '{{ route('updateExamQuestion') }}'
+                , data: {
+                    'exam_id': exam_id
+                    , 'question_id': question_id
+                    , 'title': title
+                    , 'marks': marks
+                    , 'description': description
+                    , 'myAnswers': myAnswers
+                    , "_token": "{{ csrf_token() }}"
+                , }
+                , success: function(data) {
+                    if (data.success) {
+                        showExams();
+                        toastr.success('Question updated successfully');
+                        $("#closeUpdateQuestionModal").trigger("click");
+                        viewQuestions(data.exam_id);
+                    } else {
+                        toastr.error("Something went wrong! Please try again later.");
+                    }
+                },
+            });
+        }
+    });
 </script>
 {{-- update question area --}}
 
