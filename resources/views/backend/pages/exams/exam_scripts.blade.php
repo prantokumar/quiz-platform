@@ -25,16 +25,16 @@
 <script>
     $('#save_exam_button').on('click', function(e) {
         e.preventDefault();
-        var exam_name = $('.exam_name').val();
-        var instruction = $('.instruction').val();
-        var exam_duration = $('.exam_duration').val();
-        var no_of_attempts = $('.no_of_attempts').val();
-        var exam_due_date = $('.exam_due_date').val();
-        var exam_start_date = $('.exam_start_date').val();
-        var exam_end_date = $('.exam_end_date').val();
-        var result_display = $("input[name='result_display']:checked").val();
-        var is_published = $("input[name='is_published']:checked").val();
-        var exam_input_id = $('.exam_input_id').val();
+        let exam_name = $('.exam_name').val();
+        let instruction = $('.instruction').val();
+        let exam_duration = $('.exam_duration').val();
+        let no_of_attempts = $('.no_of_attempts').val();
+        let exam_due_date = $('.exam_due_date').val();
+        let exam_start_date = $('.exam_start_date').val();
+        let exam_end_date = $('.exam_end_date').val();
+        let result_display = $("input[name='result_display']:checked").val();
+        let is_published = $("input[name='is_published']:checked").val();
+        let exam_input_id = $('.exam_input_id').val();
         if (exam_name == "") {
             toastr.error("Exam Name Missing!");
             return false;
@@ -120,16 +120,16 @@
     /* update assignment */
     $('#edit_exam_button').on('click', function(e) {
         e.preventDefault();
-        var exam_name = $('#exam_name').val();
-        var instruction = $('#instruction').val();
-        var exam_duration = $('#exam_duration').val();
-        var no_of_attempts = $('#no_of_attempts').val();
-        var exam_due_date = $('#exam_due_date').val();
-        var exam_start_date = $('#exam_start_date').val();
-        var exam_end_date = $('#exam_end_date').val();
-        var result_display = $("input[name='result_display_edit']:checked").val();
-        var is_published = $("input[name='is_published_edit']:checked").val();
-        var exam_input_edit_id = $('#exam_input_edit_id').val();
+        let exam_name = $('#exam_name').val();
+        let instruction = $('#instruction').val();
+        let exam_duration = $('#exam_duration').val();
+        let no_of_attempts = $('#no_of_attempts').val();
+        let exam_due_date = $('#exam_due_date').val();
+        let exam_start_date = $('#exam_start_date').val();
+        let exam_end_date = $('#exam_end_date').val();
+        let result_display = $("input[name='result_display_edit']:checked").val();
+        let is_published = $("input[name='is_published_edit']:checked").val();
+        let exam_input_edit_id = $('#exam_input_edit_id').val();
 
         if (exam_name == "") {
             toastr.error("Exam Name Missing!");
@@ -177,8 +177,8 @@
                 } else {
                     toastr.error("Something went wrong! Please try again later.");
                 }
-            }
-        , });
+            },
+        });
     });
     /* update assignment */
 
@@ -204,7 +204,7 @@
     }
     $('#delete_exam_button').on('click', function(e) {
         e.preventDefault();
-        var delete_exam_id = $('#delete_exam_id').val();
+        let delete_exam_id = $('#delete_exam_id').val();
         $.ajax({
             type: 'POST'
             , url: '{{ route('deleteExam') }}'
@@ -277,18 +277,19 @@
     }
     $("#save_question_button").click(function(e) {
         e.preventDefault();
-
-        var title = $("#title").val();
-        var marks = $("#marks").val();
-        var isCorrectChecked = $("input[name='is_correct[]']:checked").length > 0;
-        var myAnswers = [];
-        var check_existing_correct_answer = false;
-        var allAnswersFilled = true;
+        let exam_id = $("#exam_id").val();
+        let title = $("#title").val();
+        let marks = $("#marks").val();
+        let description = $("#description").val();
+        let isCorrectChecked = $("input[name='is_correct[]']:checked").length > 0;
+        let myAnswers = [];
+        let check_existing_correct_answer = false;
+        let allAnswersFilled = true;
 
         $('input[name="is_correct[]"]').each(function(index) {
-            var isCorrect = $(this).is(':checked') ? 1 : 0;
-            var answerField = $("input[name='answer[]']").eq(index);
-            var answerValue = answerField.val().trim();
+            let isCorrect = $(this).is(':checked') ? 1 : 0;
+            let answerField = $("input[name='answer[]']").eq(index);
+            let answerValue = answerField.val().trim();
 
             if (isCorrect === 1) {
                 check_existing_correct_answer = true;
@@ -320,13 +321,45 @@
             toastr.success('Question added successfully');
         }
 
-        console.log(myAnswers);
+        if (title !== "" && marks !== "" && check_existing_correct_answer && allAnswersFilled) {
+            $.ajax({
+                type: 'POST'
+                , url: '{{ route('addQuestionToExam') }}'
+                , data: {
+                    'exam_id': exam_id
+                    , 'title': title
+                    , 'marks': marks
+                    , 'description': description
+                    , 'myAnswers': myAnswers
+                    , "_token": "{{ csrf_token() }}"
+                , }
+                , success: function(data) {
+                    if (data.success) {
+                        showExams();
+                        toastr.success('Question added successfully');
+                        $("#closeAddExamModal").trigger("click");
+                    } else {
+                        toastr.error("Something went wrong! Please try again later.");
+                    }
+                },
+        });
+
+        }
     });
 
 </script>
 {{-- add/edit question modal open  --}}
 
-{{-- reset question area --}}
-{{-- reset question area --}}
+{{-- reset add question area --}}
+<script>
+    $('#closeAddExamModal').on('click', function() {
+        $('#title').val("");
+        $('#marks').val("");
+        $('#description').val("");
+        $('input[name="is_correct[]"]').prop('checked', false);
+        $('input[name="answer[]"]').val("");
+    });
+</script>
+{{-- reset add  question area --}}
 
 {{-- question area --}}

@@ -43,7 +43,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/get-exam-data', [ExamController::class, 'getExamDataWithExamId'])->name('getExamDataWithExamId');
         Route::post('/update-exam', [ExamController::class, 'updateExam'])->name('updateExam');
         Route::post('/delete-exam', [ExamController::class, 'deleteExam'])->name('deleteExam');
-        Route::post('/get-question-lists', [ExamController::class, 'getQuestionListByExamId'])->name('getQuestionListByExamId');
+        Route::post('/add-question-to-exam', [ExamController::class, 'addQuestionToExam'])->name('addQuestionToExam');
         /* exam module */
     });
 });

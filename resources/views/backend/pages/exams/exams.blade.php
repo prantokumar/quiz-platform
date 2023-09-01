@@ -243,7 +243,7 @@
                         <div class="col">
                             <div class="form-group">
                                 <label class="col-form-label">Mark</label>
-                                <input type="text" class="form-control" name="marks" id="marks" placeholder="Mark">
+                                <input type="number" class="form-control" name="marks" id="marks" placeholder="Mark">
                             </div>
                         </div>
                     </div>
