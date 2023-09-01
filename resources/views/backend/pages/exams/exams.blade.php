@@ -315,7 +315,7 @@
 </div>
 {{-- question add/edit full screen modal --}}
 
-{{-- question add full screen modal --}}
+{{-- question view screen modal --}}
 <div class="modal fade" id="view_questions_area_modal" tabindex="-1" role="dialog" aria-labelledby="fullscreenModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
@@ -328,24 +328,7 @@
             <form method="post" action="{{ route('addQuestionToExam') }}">
                 <input type="hidden" id="view_question_exam_id" class="form-control form-control-solid">
                 <div class="modal-body">
-
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <h4 class="mb-0">1. Question title</h4>
-                            <button class="btn btn-primary btn-sm" data-toggle="modal" data-target=".edit_question_modal">Edit</button>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6 d-flex justify-content-left align-items-center">
-                                    <span class="correct-answer"></span>
-                                    <span class="ml-2">Option 1</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <h4>Mark : 0</h4>
-                        </div>
-                    </div>
+                    <div id="view_questions"></div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeViewQuestionsModal">Close</button>
@@ -354,8 +337,33 @@
         </div>
     </div>
 </div>
-{{-- question add/edit full screen modal --}}
+{{-- question view screen modal --}}
 
+
+{{-- question edit full screen modal --}}
+<div class="modal fade edit_question_modal" tabindex="-1" role="dialog" aria-labelledby="fullscreenModalLabel" aria-hidden="true" data-backdrop="false">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="fullscreenModalLabel">Update Questions</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="{{ route('updateExamQuestions') }}">
+                <input type="text" class="form-control form-control-solid view_question_exam_id_for_edit">
+                <input type="text" class="form-control form-control-solid view_question_id_for_edit">
+                <div class="modal-body">
+                    <div id="view_questions_for_update"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeUpdateQuestionModal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{-- question edit full screen modal --}}
 @stop
 
 @section('custom_scripts')

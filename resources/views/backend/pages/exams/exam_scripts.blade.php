@@ -368,20 +368,40 @@
     function viewQuestions(examID) {
         $.ajax({
             type: 'POST'
-            , url: '{{ route('getExamDataWithExamId') }}'
+            , url: '{{ route('viewExamQuestions') }}'
             , data: {
                 'exam_id': examID
                 , "_token": "{{ csrf_token() }}"
             , }
             , success: function(data) {
-                if (data.success) {
-                    $('#view_question_exam_id').val(data.exam.id);
-                }
+                $('#view_question_exam_id').val(data.exam_id);
+                $('#view_questions').html(data.view_exam_questions);
             }
         , });
     }
-    
 </script>
 {{-- view exam questions --}}
+
+{{-- update question area --}}
+<script>
+    function updateQuestions(examID, questionID) {
+        $.ajax({
+            type: 'POST'
+            , url: '{{ route('updateExamQuestions') }}'
+            , data: {
+                'exam_id': examID
+                ,'question_id': questionID
+                ,"_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
+                $('.view_question_exam_id_for_edit').val(data.exam_id);
+                $('.view_question_id_for_edit').val(data.question_id);
+                $('#view_questions_for_update').html('');
+            }
+        , });
+    }
+</script>
+{{-- update question area --}}
+
 
 {{-- question area --}}

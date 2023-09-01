@@ -15,4 +15,7 @@ class ExamEnum extends Controller
 
     const INACTIVE = 0;
     const ACTIVE = 1;
+
+    const CORRECT_ANSWER = 1;
+    const WRONG_ANSWER = 0;
 }

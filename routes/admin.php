@@ -44,6 +44,8 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/update-exam', [ExamController::class, 'updateExam'])->name('updateExam');
         Route::post('/delete-exam', [ExamController::class, 'deleteExam'])->name('deleteExam');
         Route::post('/add-question-to-exam', [ExamController::class, 'addQuestionToExam'])->name('addQuestionToExam');
+        Route::post('/view-exam-questions', [ExamController::class, 'viewExamQuestions'])->name('viewExamQuestions');
+        Route::post('/update-exam-questions', [ExamController::class, 'updateExamQuestions'])->name('updateExamQuestions');
         /* exam module */
     });
 });

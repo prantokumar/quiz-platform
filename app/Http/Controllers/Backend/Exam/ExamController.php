@@ -265,4 +265,98 @@ class ExamController extends Controller
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
         }
     }
+
+    public function viewExamQuestions(Request $request)
+    {
+        try {
+            $exam_id = $request->exam_id;
+            $view_exam_questions = '';
+            $exam_questions = ExamQuestion::where('exam_id', $exam_id)->get();
+            $i = 1;
+            if (isset($exam_questions[0])) {
+                foreach ($exam_questions as $key => $exam_question) {
+                    $question_id = $exam_question->question_id;
+                    $questions = Question::with(['answers'])->where('id', $question_id)->get();
+                    $view_exam_questions .= '<div class="card mt-2">';
+
+                    $view_exam_questions .= '<div class="card-header d-flex justify-content-between align-items-center">';
+                    $view_exam_questions .= '<h4 class="mb-0">
+                                            <span class="badge badge-primary badge-sm">MCQ-' . $i . '.</span>
+                                            ' . $questions[0]->title . '
+                                            </h4>';
+                    $view_exam_questions .= '</div>';
+
+                    $view_exam_questions .= '<div class="card-body">';
+                    $view_exam_questions .= '<div class="row">';
+                    foreach ($questions[0]->answers as $option_key => $option) {
+                        $view_exam_questions .= '<div class="col-md-6 d-flex justify-content-left align-items-center">';
+                        $view_exam_questions .= '<span ';
+                        if ($option->is_correct == ExamEnum::CORRECT_ANSWER) {
+                            $view_exam_questions .= 'class="correct-answer"';
+                        } else {
+                            $view_exam_questions .= 'class="wrong-answer"';
+                        }
+                        $view_exam_questions .= '>';
+                        $view_exam_questions .= '</span>';
+                        $view_exam_questions .= '<span class="ml-2">' . $option->answer_details . '</span>';
+                        $view_exam_questions .= '</div>';
+                    }
+                    $view_exam_questions .= '</div>';
+                    $view_exam_questions .= '</div>';
+
+                    $view_exam_questions .= '<div class="modal-footer d-flex justify-content-between align-items-center">';
+                    $view_exam_questions .= '<button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target=".edit_question_modal" onclick="updateQuestions(' . $exam_id . ', ' . $question_id . ')";>Edit</button>';
+                    $view_exam_questions .= '<h4>Mark : ' . $questions[0]->marks . '</h4>';
+                    $view_exam_questions .= '</div>';
+
+                    $view_exam_questions .= '</div>';
+
+                    $i++;
+                }
+                return response()->json(array('exam_id' => $exam_id, 'view_exam_questions' => $view_exam_questions));
+            } else {
+                $view_exam_questions .= '
+               <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Oops!</strong> No questions found!
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+               ';
+            }
+        } catch (Exception $error) {
+            Log::info('viewExamQuestions => Backend Error');
+            Log::info($error->getMessage());
+            dd($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+        }
+    }
+
+    public function updateExamQuestions(Request $request)
+    {
+        try {
+            $exam_id = $request->exam_id;
+            $question_id = $request->question_id;
+            $view_question_for_update = '';
+            $exam_question = ExamQuestion::where('exam_id', $exam_id)->first();
+            $i = 1;
+            if (isset($exam_question)) {
+                return response()->json(array('exam_id' => $exam_id, 'question_id' => $question_id,'view_question_for_update' => $view_question_for_update));
+            } else {
+                $view_question_for_update .= '
+               <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Oops!</strong> No questions found!
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+               ';
+            }
+        } catch (Exception $error) {
+            Log::info('updateExamQuestions => Backend Error');
+            Log::info($error->getMessage());
+            dd($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+        }
+    }
 }
