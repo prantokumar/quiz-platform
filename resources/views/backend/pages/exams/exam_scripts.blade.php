@@ -277,15 +277,31 @@
     }
     $("#save_question_button").click(function(e) {
         e.preventDefault();
+
         var title = $("#title").val();
         var marks = $("#marks").val();
         var isCorrectChecked = $("input[name='is_correct[]']:checked").length > 0;
-        var answerFilled = true;
-        $("input[name='answer[]']").each(function() {
-            if ($(this).val().trim() === "") {
-                answerFilled = false;
-                return false;
+        var myAnswers = [];
+        var check_existing_correct_answer = false;
+        var allAnswersFilled = true;
+
+        $('input[name="is_correct[]"]').each(function(index) {
+            var isCorrect = $(this).is(':checked') ? 1 : 0;
+            var answerField = $("input[name='answer[]']").eq(index);
+            var answerValue = answerField.val().trim();
+
+            if (isCorrect === 1) {
+                check_existing_correct_answer = true;
             }
+
+            if (answerValue === "") {
+                allAnswersFilled = false;
+            }
+
+            myAnswers.push({
+                ans_title: answerValue,
+                ans_is_correct: isCorrect,
+            });
         });
 
         if (title === "") {
@@ -294,18 +310,17 @@
         else if (marks === "") {
             toastr.error('Please enter marks for the question');
         }
-        else if (!answerFilled) {
+        else if (!allAnswersFilled) {
             toastr.error('Please fill in all answer fields');
         }
-        else if(!isCorrectChecked) {
+        else if (!check_existing_correct_answer) {
             toastr.error('Please select one of the options as correct');
-        }else{
-
         }
-
-        if (title !== "" && marks !== "" && isCorrectChecked && answerFilled) {
+        else {
             toastr.success('Question added successfully');
         }
+
+        console.log(myAnswers);
     });
 
 </script>
