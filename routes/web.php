@@ -56,8 +56,12 @@ Route::group(['middleware' => ['auth']], function () {
     /* user password update */
     Route::get('/change-password', [ChangePasswordController::class, 'userUpdatePassword'])->name('userUpdatePassword');
     Route::post('/update-password-save', [ChangePasswordController::class, 'userUpdatePasswordSave'])->name('userUpdatePasswordSave');
-        /* user password update */
+    /* user password update */
     /* view user dashboard page */
     Route::get('/dashboard', [DashboardController::class, 'userDashboard'])->name('userDashboard');
     /* view user dashboard page */
+    /* user exam management */
+    Route::post('/show-exam-for-user', [DashboardController::class, 'showExamsForUser'])->name('showExamsForUser');
+    Route::post('/view-exam-questions-for-user', [DashboardController::class, 'viewExamQuestionsForUser'])->name('viewExamQuestionsForUser');
+    /* user exam management */
 });
