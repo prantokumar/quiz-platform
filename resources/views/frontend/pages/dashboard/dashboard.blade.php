@@ -21,11 +21,11 @@
 <!--end::Admin Dashbiard -->
 
 {{-- question view screen modal --}}
-<div class="modal fade" id="view_questions_area_modal_for_user" tabindex="-1" role="dialog" aria-labelledby="fullscreenModalLabel" aria-hidden="true">
+<div class="modal fade" id="view_questions_area_modal_for_user" tabindex="-1" role="dialog" aria-labelledby="fullscreenModalLabel" aria-hidden="true" data-target="#staticBackdrop" data-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="fullscreenModalLabel">Questions</h5>
+                <h5 class="modal-title" id="fullscreenModalLabel">Questions&nbsp;<span id="timer" class="badge badge-warning badge-lg mr-auto"></span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

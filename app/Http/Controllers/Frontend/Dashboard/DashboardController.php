@@ -117,6 +117,7 @@ class DashboardController extends Controller
     {
         try {
             $exam_id = $request->exam_id;
+            $exam_duration = Exam::getExamDuration($exam_id);
             $view_exam_questions = '';
             $exam_questions = ExamQuestion::where('exam_id', $exam_id)->get();
             $i = 1;
@@ -161,7 +162,7 @@ class DashboardController extends Controller
 
                     $i++;
                 }
-                return response()->json(array('exam_id' => $exam_id, 'view_exam_questions' => $view_exam_questions));
+                return response()->json(array('exam_id' => $exam_id, 'exam_duration' => $exam_duration , 'view_exam_questions' => $view_exam_questions));
             } else {
                 $view_exam_questions .= '
                <div class="alert alert-warning alert-dismissible fade show" role="alert">
@@ -208,7 +209,7 @@ class DashboardController extends Controller
                     return response()->json(array('success' => true, 'exam_id' => $request->exam_id, 'exam_submission_id' => $exam_submission_id));
                 } else {
                     DB::rollback();
-                    return response()->json(array('success' => false));
+                    return response()->json(array('error' => 'no_question_answer'));
                 }
             }
         } catch (Exception $error) {

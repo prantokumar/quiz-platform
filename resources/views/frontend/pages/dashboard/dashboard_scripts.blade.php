@@ -27,6 +27,7 @@
             e.preventDefault();
             $("#closeQuizStartConfirmationModal").trigger("click");
             viewExamQuestionsForUser(examID);
+            $('#start_quiz_button').off('click');
         });
     }
 </script>
@@ -46,14 +47,43 @@
             , success: function(data) {
                 $('#view_question_exam_id').val(data.exam_id);
                 $('#view_questions').html(data.view_exam_questions);
+                var totalSeconds = data.exam_duration * 60;
+                startCountdown(totalSeconds);
             }
         , });
+    }
+    let countdown;
+    function startCountdown(totalSeconds) {
+        var endTime = new Date().getTime() + totalSeconds * 1000;
+        countdown = setInterval(function () {
+            var currentTime = new Date().getTime();
+            var remainingTime = endTime - currentTime;
+            if (remainingTime <= 0) {
+                clearInterval(countdown);
+                $('#timer').text("0m 0s");
+                $('#submit_exam_button').click();
+                $('#closeViewQuestionsModal').click();
+            } else {
+                var minutes = Math.floor(remainingTime / (1000 * 60));
+                var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+                $('#timer').text(minutes + "m " + seconds + "s");
+            }
+        }, 1000);
+    }
+    function resetTimer() {
+        clearInterval(countdown);
+    }
+    function handleModalClose() {
+        resetTimer();
     }
 </script>
 {{-- view exam questions for users--}}
 
 {{-- submit exam --}}
 <script>
+    $('#view_questions_area_modal_for_user').on('hidden.bs.modal', function () {
+        handleModalClose();
+    });
     $('#submit_exam_button').on('click', function(e) {
         e.preventDefault();
 
@@ -79,7 +109,7 @@
             }
         });
 
-        console.log(question_answers);
+        //console.log(question_answers);
 
         $.ajax({
             type: 'POST'
@@ -90,13 +120,19 @@
                 , "_token": "{{ csrf_token() }}"
             , }
             , success: function(data) {
-                $("#closeViewQuestionsModal").trigger("click");
-                showExams();
-                toastr.success('Quiz submitted successfully');
+                if(data.error == 'no_question_answer')
+                {
+                    toastr.error('Oops! you submit the exam without answer any single questions.');
+                    $("#closeViewQuestionsModal").trigger("click");
+                    resetTimer();
+                }else{
+                    $("#closeViewQuestionsModal").trigger("click");
+                    resetTimer();
+                    showExams();
+                    toastr.success('Quiz submitted successfully');
+                }
             }
         , });
-
-
     });
 </script>
 {{-- submit exam --}}

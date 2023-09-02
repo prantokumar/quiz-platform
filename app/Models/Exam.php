@@ -56,4 +56,14 @@ class Exam extends Model
         $submissions = ExamSubmission::where('exam_id', $exam_id)->exists();
         return $submissions;
     }
+    public static function getExamDuration($exam_id)
+    {
+        $exam = Exam::where('id', $exam_id)->first();
+        if(isset($exam)){
+            $exam_duration = $exam->exam_duration;
+        }else{
+            $exam_duration = 0;
+        }
+        return $exam_duration;
+    }
 }
