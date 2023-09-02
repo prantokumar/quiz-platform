@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Laravel\Ui\Presets\React;
 
 class DashboardController extends Controller
 {
@@ -87,11 +88,11 @@ class DashboardController extends Controller
                 $user_exam_submission_count = ExamSubmission::userExamSubmissionsCount($exam->id, Auth::user()->id);
                 if ($exam->no_of_attempts == $user_exam_submission_count) {
                     $exam_data .= '<button type="button" class="btn btn-danger btn-sm" disabled>Attempts Over</button>';
-                }else{
+                } else {
                     $exam_data .= '<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".quiz_start_confirmation_modal" onclick="showQuizStartConfirmation(' . $exam->id . ')";>Start Quiz</button>';
                 }
                 if ($user_exam_submission_count > 0) {
-                    $exam_data .= '<a href="'.route('examSubmissionDetailsForUser', ['exam_id' => encrypt($exam->id), 'user_id' => encrypt(Auth::user()->id)]).'" class="btn btn-primary btn-sm ml-2">View Submissions ('.$user_exam_submission_count.')</a>';
+                    $exam_data .= '<a href="' . route('examSubmissionDetailsForUser', ['exam_id' => encrypt($exam->id), 'user_id' => encrypt(Auth::user()->id)]) . '" class="btn btn-primary btn-sm ml-2">View Submissions (' . $user_exam_submission_count . ')</a>';
                 }
                 $exam_data .= '</div>';
 
@@ -202,6 +203,7 @@ class DashboardController extends Controller
                         $answerAdd->answer_id = $answer_id;
                         $answerAdd->save();
                     }
+                    $this->updateObtainedMarksOfUser($request, $exam_submission_id);
                     DB::commit();
                     return response()->json(array('success' => true, 'exam_id' => $request->exam_id, 'exam_submission_id' => $exam_submission_id));
                 } else {
@@ -215,6 +217,16 @@ class DashboardController extends Controller
             dd($error->getMessage());
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
         }
+    }
+
+    private function updateObtainedMarksOfUser(Request $request, $exam_submission_id)
+    {
+        $check_answers = Question::checkAnswerIsCorrect($request->exam_id, $exam_submission_id);
+        $totalObtainedMarks = $check_answers['total_obtained_marks'];
+        $exam_submission = ExamSubmission::where('id', $exam_submission_id)->first();
+        $exam_submission->obtained_marks = $totalObtainedMarks;
+        $exam_submission->save();
+        return $exam_submission;
     }
 
     public function examSubmissionDetailsForUser()
@@ -294,7 +306,7 @@ class DashboardController extends Controller
                                     $data_generate .= ' <span class="badge badge-sm badge-success">correct answer</span>';
                                 } else {
                                     if ($correct == 1) {
-                                        $data_generate .= ' <span class="badge badge-sm badge-secondary">user answer</span>';
+                                        $data_generate .= ' <span class="badge badge-sm badge-secondary">your answer</span>';
                                     }
                                 }
                                 $data_generate .= '</span>';
