@@ -50,28 +50,24 @@ class LoginController extends Controller
             $user_details = $user_details->first();
             if (isset($user_details)) {
                 if (Hash::check($request->password, $user_details->password)) {
-                    if ($user_details->confirmation_code == null) {
-                        if ($user_details->user_type == UserTypeEnum::USER) {
+                    if ($user_details->user_type == UserTypeEnum::USER) {
 
-                            $this->loginPath = env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_USER_LOGIN');
-                            $this->redirectPath = env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_USER_LOGIN');
+                        $this->loginPath = env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_USER_LOGIN');
+                        $this->redirectPath = env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_USER_LOGIN');
 
-                            if (filter_var($request->email_or_mobile, FILTER_VALIDATE_EMAIL)) {
-                                if (Auth::attempt(['email' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::USER])) {
+                        if (filter_var($request->email_or_mobile, FILTER_VALIDATE_EMAIL)) {
+                            if (Auth::attempt(['email' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::USER])) {
 
-                                    return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_USER_LOGIN'));
-                                }
-                            } else {
-                                if (Auth::attempt(['mobile_number' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::USER])) {
-
-                                    return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_USER_LOGIN'));
-                                }
+                                return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_USER_LOGIN'));
                             }
                         } else {
-                            return redirect()->back()->with('error_message', 'You are not an authorized member!');
+                            if (Auth::attempt(['mobile_number' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::USER])) {
+
+                                return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_USER_LOGIN'));
+                            }
                         }
                     } else {
-                        return redirect()->back()->with('error_message', 'Please confirm your email.');
+                        return redirect()->back()->with('error_message', 'You are not an authorized member!');
                     }
                 } else {
                     return redirect()->back()->with('error_message', 'Invalid mobile number or password');

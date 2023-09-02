@@ -53,29 +53,23 @@ class LoginController extends Controller
 
             if (isset($user_details)) {
                 if (Hash::check($request->password, $user_details->password)) {
-                    if ($user_details->confirmation_code == null) {
-                        if ($user_details->user_type == UserTypeEnum::ADMIN) {
-
-                            $this->loginPath = env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN');
-                            $this->redirectPath = env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN');
-
-                            if (filter_var($request->email_or_mobile, FILTER_VALIDATE_EMAIL)) {
-                                if (Auth::attempt(['email' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::ADMIN])) {
-                                    // Generate the authenticated admin user token
-                                    $this->generateSanctumAuthenticationToken($request, $user_details);
-                                    return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN'));
-                                }
-                            } else {
-                                if (Auth::attempt(['mobile_number' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::ADMIN])) {
-                                    $this->generateSanctumAuthenticationToken($request, $user_details);
-                                    return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN'));
-                                }
+                    if ($user_details->user_type == UserTypeEnum::ADMIN) {
+                        $this->loginPath = env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN');
+                        $this->redirectPath = env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN');
+                        if (filter_var($request->email_or_mobile, FILTER_VALIDATE_EMAIL)) {
+                            if (Auth::attempt(['email' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::ADMIN])) {
+                                // Generate the authenticated admin user token
+                                $this->generateSanctumAuthenticationToken($request, $user_details);
+                                return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN'));
                             }
                         } else {
-                            return redirect()->back()->with('error_message', 'You are not an authorized member!');
+                            if (Auth::attempt(['mobile_number' => $request->email_or_mobile, 'password' => $request->password, 'user_type' => UserTypeEnum::ADMIN])) {
+                                $this->generateSanctumAuthenticationToken($request, $user_details);
+                                return redirect()->intended(env('REDIRECT_LOCATION_AFTER_SUCCESSFUL_ADMIN_LOGIN'));
+                            }
                         }
                     } else {
-                        return redirect()->back()->with('error_message', 'Please confirm your email.');
+                        return redirect()->back()->with('error_message', 'You are not an authorized member!');
                     }
                 } else {
                     return redirect()->back()->with('error_message', 'Invalid mobile number or password');

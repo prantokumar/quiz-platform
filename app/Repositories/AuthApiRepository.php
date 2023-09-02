@@ -4,23 +4,19 @@ namespace App\Repositories;
 
 use App\Http\Controllers\Enum\UserTypeEnum;
 use App\Interfaces\AuthApiInterface;
-use App\Models\Admin\LoggedInDevice;
 use App\Models\User;
-use App\UtilityFunction;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthApiRepository implements AuthApiInterface
 {
-    protected $secret = 'c17fedafcf8b0642f178718ba0e9c97544bdccf0';
+    protected $secret = 'b4ba1ac3ea86e7622fc2f1d1600aeaaf5853f0ac';
 
     public function checkSecretKeyForApiAuthentication(Request $request)
     {
         $secret_key = $this->secret;
-        $SecretKey = $request->header('SecretKey');
+        $SecretKey = $request->header('custom_secret_key');
         if (!is_null($SecretKey)) {
             if ($SecretKey == $secret_key) {
                 return true;
@@ -44,16 +40,16 @@ class AuthApiRepository implements AuthApiInterface
             $check_authenticate_user = PersonalAccessToken::where('token', $personal_access_token)->where('tokenable_id', $user_id)->exists();
             return $check_authenticate_user;
         } else {
-            return ('APP_ENV' == 'production') ? false : true;
+            return false;
         }
     }
 
     public function checkMobileOrEmailAlreadyExists(Request $request)
     {
         if (filter_var($request->mobile_or_email, FILTER_VALIDATE_EMAIL)) {
-            $checkExistedEmailOrMobile = User::where('user_type', UserTypeEnum::USER)->where('email', $request->mobile_or_email);
+            $checkExistedEmailOrMobile = User::where('user_type', UserTypeEnum::ADMIN)->where('email', $request->mobile_or_email);
         } else {
-            $checkExistedEmailOrMobile = User::where('user_type', UserTypeEnum::USER)->where('mobile_number', $request->mobile_or_email);
+            $checkExistedEmailOrMobile = User::where('user_type', UserTypeEnum::ADMIN)->where('mobile_number', $request->mobile_or_email);
         }
         $checkExistedEmailOrMobile = $checkExistedEmailOrMobile->exists();
 
@@ -63,9 +59,9 @@ class AuthApiRepository implements AuthApiInterface
     public function user(Request $request)
     {
         if (filter_var($request->mobile_or_email, FILTER_VALIDATE_EMAIL)) {
-            $user = User::where('email', $request->mobile_or_email)->where('user_type', UserTypeEnum::USER);
+            $user = User::where('email', $request->mobile_or_email)->where('user_type', UserTypeEnum::ADMIN);
         } else {
-            $user = User::where('mobile_number', $request->mobile_or_email)->where('user_type', UserTypeEnum::USER);
+            $user = User::where('mobile_number', $request->mobile_or_email)->where('user_type', UserTypeEnum::ADMIN);
         }
         $user = $user->first();
 
