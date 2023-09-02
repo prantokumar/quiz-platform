@@ -9,6 +9,7 @@ use App\Http\Controllers\Backend\Auth\ProfileUpdateController;
 use App\Http\Controllers\Backend\Exam\ExamController;
 use App\Http\Controllers\Backend\Exam\ExamSubmissionController;
 use App\Http\Controllers\Backend\Users\UserController;
+use App\Http\Controllers\Frontend\LeaderBoardController;
 
 Route::group(['prefix' => 'admin'], function () {
 
@@ -55,5 +56,9 @@ Route::group(['prefix' => 'admin'], function () {
         Route::any('/show-exam-submissions', [ExamSubmissionController::class, 'examSubmissionDetails'])->name('examSubmissionDetails');
         Route::post('/genearte-submission-details', [ExamSubmissionController::class, 'generateSubmissionDetails'])->name('generateSubmissionDetails');
         /* exam/quiz submission details */
+
+        /* exam submission details */
+        Route::get('/show-leaderboard', [LeaderBoardController::class, 'LeaderBoard'])->name('LeaderBoard');
+        /* exam submission details */
     });
 });

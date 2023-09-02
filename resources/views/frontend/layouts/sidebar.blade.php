@@ -21,6 +21,12 @@
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">
 
+    <li class="nav-item @if (!empty($menu) && $menu == 'user_leaderboard') active @endif">
+        <a class="nav-link" href="{{ route('userLeaderBoard') }}">
+            <i class="fas fa-fw fa-list"></i>
+            <span>Leaderboard</span></a>
+    </li>
+
     <!-- Sidebar Toggler (Sidebar) -->
     <div class="text-center d-none d-md-inline">
         <button class="rounded-circle border-0" id="sidebarToggle"></button>

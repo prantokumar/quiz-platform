@@ -9,6 +9,7 @@ use App\Http\Controllers\Frontend\Dashboard\DashboardController;
 use App\Http\Controllers\Frontend\Auth\LogoutController;
 use App\Http\Controllers\Frontend\Auth\ProfileUpdateController;
 use App\Http\Controllers\Frontend\Auth\UserRegistrationController;
+use App\Http\Controllers\Frontend\LeaderBoardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -69,5 +70,10 @@ Route::group(['middleware' => ['auth']], function () {
     /* exam submission details */
     Route::any('/show-user-exam-submissions', [DashboardController::class, 'examSubmissionDetailsForUser'])->name('examSubmissionDetailsForUser');
     Route::post('/genearte-submission-details-for-user', [DashboardController::class, 'generateSubmissionDetailsForUser'])->name('generateSubmissionDetailsForUser');
+    /* exam submission details */
+
+
+    /* exam submission details */
+    Route::get('/show-leaderboard', [LeaderBoardController::class, 'userLeaderBoard'])->name('userLeaderBoard');
     /* exam submission details */
 });
