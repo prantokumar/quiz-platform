@@ -7,10 +7,13 @@ use App\Http\Controllers\Enum\ExamEnum;
 use App\Models\Exam;
 use App\Models\ExamQuestion;
 use App\Models\ExamSubmission;
+use App\Models\ExamSubmissionDetail;
 use App\Models\Question;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
@@ -80,8 +83,11 @@ class DashboardController extends Controller
                 $exam_data .= '</div>';
 
                 $exam_data .= '<div class="modal-footer d-flex justify-content-between align-items-center">';
-                $exam_data .= '<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#view_questions_area_modal_for_user" onclick="viewExamQuestionsForUser(' . $exam->id . ')";>Start Exam</button>';
-                $exam_data .= '<button type="button" class="btn btn-primary btn-sm ml-2">View Submissions</button>';
+                $exam_data .= '<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".quiz_start_confirmation_modal" onclick="showQuizStartConfirmation(' . $exam->id . ')";>Start Quiz</button>';
+                $user_submission_count = ExamSubmission::userExamSubmissionsCount($exam->id, Auth::user()->id);
+                if ($user_submission_count > 0) {
+                    $exam_data .= '<button type="button" class="btn btn-primary btn-sm ml-2">View Submissions ('.$user_submission_count.')</button>';
+                }
                 $exam_data .= '</div>';
 
                 $exam_data .= '</div>';
@@ -122,8 +128,9 @@ class DashboardController extends Controller
                     $view_exam_questions .= '</div>';
 
                     $view_exam_questions .= '<div class="card-body">';
+                    $view_exam_questions .= '<input type="hidden" name="exam_id" class="form-control exam_id" value="' . $exam_id . '">';
                     $view_exam_questions .= '<div class="form-group">';
-                    $view_exam_questions .= '<input type="hidden" name="question_id" class="form-control question_id" value="'.$question_id.'">';
+                    $view_exam_questions .= '<input type="hidden" name="question_id" class="form-control question_id" value="' . $question_id . '">';
 
                     $question_radio_name = 'answer_id_' . $question_id;
 
@@ -131,7 +138,7 @@ class DashboardController extends Controller
                         $view_exam_questions .= '<div class="input-group m-1">';
                         $view_exam_questions .= '<div class="input-group-prepend">';
                         $view_exam_questions .= '<div class="input-group-text">';
-                        $view_exam_questions .= '<input type="radio" name="' . $question_radio_name . '" data-option-key="'.$option->id.'" class="" value="'.$option->id.'">';
+                        $view_exam_questions .= '<input type="radio" name="' . $question_radio_name . '" data-option-key="' . $option->id . '" class="" value="' . $option->id . '">';
                         $view_exam_questions .= '</div>';
                         $view_exam_questions .= '</div>';
                         $view_exam_questions .= '<input type="text" class="form-control" disabled value="' . htmlspecialchars($option->answer_details, ENT_QUOTES, 'UTF-8') . '">';
@@ -161,6 +168,44 @@ class DashboardController extends Controller
             }
         } catch (Exception $error) {
             Log::info('viewExamQuestions => Backend Error');
+            Log::info($error->getMessage());
+            dd($error->getMessage());
+            return redirect()->back()->with('message', 'Something went wrong! Please try again later.');
+        }
+    }
+
+    public function submitQuiz(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+            $examSubmission = new ExamSubmission();
+            $examSubmission->exam_id = $request->exam_id;
+            $examSubmission->user_id = Auth::user()->id;
+            $examSubmission->submission_date =  Carbon::now();
+            $examSubmission->status = 1;
+            $examSubmission->is_running = 1;
+            if ($examSubmission->save()) {
+                $exam_submission_id = $examSubmission->id;
+                $exam_submission_details = $request->question_answers;
+                if (isset($exam_submission_details[0])) {
+                    foreach ($exam_submission_details as $exam_submission_detail) {
+                        $question_id = $exam_submission_detail['question_id'];
+                        $answer_id = isset($exam_submission_detail['answer_id']) ? $exam_submission_detail['answer_id'] : null;
+                        $answerAdd = new ExamSubmissionDetail();
+                        $answerAdd->exam_submission_id = $exam_submission_id;
+                        $answerAdd->question_id = $question_id;
+                        $answerAdd->answer_id = $answer_id;
+                        $answerAdd->save();
+                    }
+                    DB::commit();
+                    return response()->json(array('success' => true, 'exam_id' => $request->exam_id, 'exam_submission_id' => $exam_submission_id));
+                } else {
+                    DB::rollback();
+                    return response()->json(array('success' => false));
+                }
+            }
+        } catch (Exception $error) {
+            Log::info('submitQuiz => Backend Error');
             Log::info($error->getMessage());
             dd($error->getMessage());
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');

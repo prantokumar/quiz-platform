@@ -16,6 +16,12 @@ class ExamSubmission extends Model
         $exam_submissions = ExamSubmission::where('exam_id', $exam_id)->where('user_id', $user_id)->get();
         return $exam_submissions;
     }
+    public static function userExamSubmissionsCount($exam_id, $user_id)
+    {
+        $exam_submissions = ExamSubmission::where('exam_id', $exam_id)->where('user_id', $user_id)->get();
+        $exam_submission_count = $exam_submissions->count();
+        return $exam_submission_count;
+    }
     public static function submissionCount($exam_id)
     {
         $exam_submission = ExamSubmission::where('exam_id', $exam_id)->get();

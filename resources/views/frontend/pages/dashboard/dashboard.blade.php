@@ -30,20 +30,45 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="post" action="{{ route('viewExamQuestionsForUser') }}">
+            <form method="post" action="{{ route('submitQuiz') }}">
                 <input type="hidden" id="view_question_exam_id" class="form-control form-control-solid">
                 <div class="modal-body" style="height: 600px; overflow-y:auto;">
                     <div id="view_questions"></div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeViewQuestionsModal">Close</button>
-                    <button type="button" class="btn btn-primary" id="submit_exam_button">Save exam</button>
+                    <button type="button" class="btn btn-primary" id="submit_exam_button">Submit quiz</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 {{-- question view screen modal --}}
+
+{{-- quiz start before confirmation modal --}}
+<div class="modal fade quiz_start_confirmation_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ready to start quiz test?</h5>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <form id="quiz_start_confirmation_modal_form" class="form" action="{{ route('deleteExamQuestion') }}" method="post">
+                <div class="modal-body">
+                    Ready to start quiz?
+                    <input type="hidden" id="get_exam_id" class="form-control form-control-solid">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal" id="closeQuizStartConfirmationModal">Cancel quiz</button>
+                    <button class="btn btn-primary" id="start_quiz_button">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{{-- quiz start before confirmation modal --}}
 @stop
 
 @section('custom_scripts')

@@ -9,7 +9,7 @@ class ExamSubmissionDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'assignment_submission_details';
+    protected $table = 'exam_submission_details';
 
     public static function getAnswers($attempt_id)
     {

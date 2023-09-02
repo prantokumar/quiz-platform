@@ -63,5 +63,6 @@ Route::group(['middleware' => ['auth']], function () {
     /* user exam management */
     Route::post('/show-exam-for-user', [DashboardController::class, 'showExamsForUser'])->name('showExamsForUser');
     Route::post('/view-exam-questions-for-user', [DashboardController::class, 'viewExamQuestionsForUser'])->name('viewExamQuestionsForUser');
+    Route::post('/submit-quiz', [DashboardController::class, 'submitQuiz'])->name('submitQuiz');
     /* user exam management */
 });

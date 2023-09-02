@@ -20,9 +20,22 @@
 </script>
 {{-- show exams --}}
 
+{{-- quiz start confirmation --}}
+<script>
+    function showQuizStartConfirmation(examID) {
+        $('#start_quiz_button').on('click', function(e) {
+            e.preventDefault();
+            $("#closeQuizStartConfirmationModal").trigger("click");
+            viewExamQuestionsForUser(examID);
+        });
+    }
+</script>
+{{-- quiz start confirmation --}}
+
 {{-- view exam questions for users--}}
 <script>
     function viewExamQuestionsForUser(examID) {
+        $('#view_questions_area_modal_for_user').modal('show');
         $.ajax({
             type: 'POST'
             , url: '{{ route('viewExamQuestionsForUser') }}'
@@ -44,32 +57,46 @@
     $('#submit_exam_button').on('click', function(e) {
         e.preventDefault();
 
+        var question_answers = [];
 
-        var question_answer = []; // Initialize an empty array named question_answer
+        let exam_id = $('.exam_id').val();
 
-        // Iterate through each question group
         $('.form-group').each(function(index, element) {
             var question_id = $(element).find('.question_id').val();
             var answers = [];
 
-            // Iterate through each checked answer in this question group
             $(element).find('input[name^="answer_id_"]:checked').each(function() {
                 var answer_id = $(this).val();
                 answers.push(answer_id);
             });
 
-            // If there's only one answer, extract it as a single value
             if (question_id && answers.length > 0) {
-                var answer_ids = (answers.length === 1) ? answers[0] : answers;
-                question_answer.push({
+                var answer_id = (answers.length === 1) ? answers[0] : answers;
+                question_answers.push({
                     'question_id': question_id,
-                    'answer_ids': answer_ids
+                    'answer_id': answer_id
                 });
             }
         });
 
-        // Now, question_answer contains the desired array of objects
-        console.log(question_answer);
+        console.log(question_answers);
+
+        $.ajax({
+            type: 'POST'
+            , url: '{{ route('submitQuiz') }}'
+            , data: {
+                'exam_id': exam_id
+                , "question_answers": question_answers
+                , "_token": "{{ csrf_token() }}"
+            , }
+            , success: function(data) {
+                $("#closeViewQuestionsModal").trigger("click");
+                showExams();
+                toastr.success('Quiz submitted successfully');
+            }
+        , });
+
+
     });
 </script>
 {{-- submit exam --}}
