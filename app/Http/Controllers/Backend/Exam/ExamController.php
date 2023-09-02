@@ -72,9 +72,10 @@ class ExamController extends Controller
 
                 $exam_data .= '<h5 class="card-title"><span class="badge badge-pill badge-light">Due Date : ' . Carbon::parse($exam->exam_due_date)->format("d F, Y") . '</span></h5>';
 
+                $exam_submission_count = ExamSubmission::submissionCount($exam->id);
                 $exam_data .= '<div class="badge badge-info border-success ms-2" data-toggle="tooltip" data-placement="top" title="Submissions" style="cursor:pointer;">
-                                    <a href="#" style="color:#fff;text-decoration:none;">
-                                        Submissions (0)
+                                    <a href="' . route('examSubmissionDetails', ['exam_id' => encrypt($exam->id)]) . '" style="color:#fff;text-decoration:none;">
+                                        Submissions ('.$exam_submission_count.')
                                     </a>
                                 </div>';
 
