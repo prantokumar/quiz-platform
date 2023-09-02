@@ -83,8 +83,12 @@ class DashboardController extends Controller
                 $exam_data .= '</div>';
 
                 $exam_data .= '<div class="modal-footer d-flex justify-content-between align-items-center">';
-                $exam_data .= '<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".quiz_start_confirmation_modal" onclick="showQuizStartConfirmation(' . $exam->id . ')";>Start Quiz</button>';
                 $user_exam_submission_count = ExamSubmission::userExamSubmissionsCount($exam->id, Auth::user()->id);
+                if ($exam->no_of_attempts == $user_exam_submission_count) {
+                    $exam_data .= '<button type="button" class="btn btn-danger btn-sm" disabled>Attempts Over</button>';
+                }else{
+                    $exam_data .= '<button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target=".quiz_start_confirmation_modal" onclick="showQuizStartConfirmation(' . $exam->id . ')";>Start Quiz</button>';
+                }
                 if ($user_exam_submission_count > 0) {
                     $exam_data .= '<button type="button" class="btn btn-primary btn-sm ml-2">View Submissions ('.$user_exam_submission_count.')</button>';
                 }

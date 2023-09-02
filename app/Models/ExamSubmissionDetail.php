@@ -13,12 +13,12 @@ class ExamSubmissionDetail extends Model
 
     public static function getAnswers($attempt_id)
     {
-        $answers = ExamSubmissionDetail::select('assignment_submission_id as attempt_id', 'question_id', 'answer_id', 'broad_ans', 'file_answer')->where('assignment_submission_id', $attempt_id)->get();
+        $answers = ExamSubmissionDetail::select('exam_submission_id as attempt_id', 'question_id', 'answer_id')->where('exam_submission_id', $attempt_id)->get();
         return $answers;
     }
     public static function getOnlyFileAndBroadAnswers($attempt_id)
     {
-        $answers = ExamSubmissionDetail::select('assignment_submission_id as attempt_id', 'question_id', 'answer_id', 'broad_ans', 'file_answer')->where('answer_id', 0)->where('assignment_submission_id', $attempt_id)->get();
+        $answers = ExamSubmissionDetail::select('exam_submission_id as attempt_id', 'question_id', 'answer_id')->where('answer_id', 0)->where('exam_submission_id', $attempt_id)->get();
         return $answers;
     }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Backend\Dashboard\DashboardController;
 use App\Http\Controllers\Backend\Auth\LogoutController;
 use App\Http\Controllers\Backend\Auth\ProfileUpdateController;
 use App\Http\Controllers\Backend\Exam\ExamController;
+use App\Http\Controllers\Backend\Exam\ExamSubmissionController;
 use App\Http\Controllers\Backend\Users\UserController;
 
 Route::group(['prefix' => 'admin'], function () {
@@ -51,7 +52,8 @@ Route::group(['prefix' => 'admin'], function () {
         /* exam module */
 
         /* exam/quiz submission details */
-        Route::any('/show-exam-submissions', [ExamController::class, 'examSubmissionDetails'])->name('examSubmissionDetails');
+        Route::any('/show-exam-submissions', [ExamSubmissionController::class, 'examSubmissionDetails'])->name('examSubmissionDetails');
+        Route::post('/genearte-submission-details', [ExamSubmissionController::class, 'generateSubmissionDetails'])->name('generateSubmissionDetails');
         /* exam/quiz submission details */
     });
 });
