@@ -34,10 +34,11 @@ class ExamSubmissionController extends Controller
         try {
             $exam_id = $request->exam_id;
             $user_id = $request->user_id;
+            $submission_id = $request->submission_id;
             $data_generate = '';
             $submissions = ExamSubmission::examSubmissions($exam_id, $user_id);
             $exam_questions = ExamQuestion::getExamQuestions($exam_id);
-            $answers = ExamSubmissionDetail::getAnswers($submissions[0]->id);
+            $answers = ExamSubmissionDetail::getAnswers($submission_id);
             $i = 1;
             if (isset($exam_questions[0])) {
                 foreach ($exam_questions as $key => $exam_question) {
@@ -103,7 +104,7 @@ class ExamSubmissionController extends Controller
 
                         $data_generate .= '<div class="modal-footer d-flex justify-content-between align-items-center">';
                         $data_generate .= '<h4>Mark : ' . $questions[0]->marks . '</h4>';
-                        $check_answers = Question::checkAnswerIsCorrect($exam_id, $submissions[0]->id);
+                        $check_answers = Question::checkAnswerIsCorrect($exam_id, $submission_id);
                         $totalObtainedMarks = $check_answers['total_obtained_marks'];
                         $data_generate .= '<h4>Obtained Mark : ';
                         if (isset($check_answers['questions'])) {
@@ -127,7 +128,7 @@ class ExamSubmissionController extends Controller
             } else {
                 $data_generate .= '
                <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                    <strong>Oops!</strong> No questions found!
+                    <strong>Oops!</strong> No submission found!
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -135,7 +136,7 @@ class ExamSubmissionController extends Controller
                ';
             }
         } catch (Exception $error) {
-            Log::info('examSubmissionDetails => Backend Error');
+            Log::info('generateSubmissionDetails => Backend Error');
             Log::info($error->getMessage());
             dd($error->getMessage());
             return redirect()->back()->with('message', 'Something went wrong! Please try again later.');

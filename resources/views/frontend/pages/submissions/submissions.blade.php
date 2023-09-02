@@ -1,5 +1,5 @@
-@extends('backend.global.master', ['menu' => 'exams'])
-@section('title', __('Submissions'))
+@extends('frontend.global.master', ['menu' => 'user_dashboard'])
+@section('title', __('User Submissions'))
 
 @section('custom_stylesheet')
 <style>
@@ -28,8 +28,10 @@
 <div class="container-fluid">
     <!-- Page Heading -->
     <h1 class="h3 mb-4 text-gray-800">Submissions</h1>
+    <a class="btn btn-success btn-sm mb-2" href="{{ route('userDashboard') }}">Back</a>
     @php
         $exam_id = \Illuminate\Support\Facades\Crypt::decrypt(request()->get('exam_id'));
+        $user_id = \Illuminate\Support\Facades\Crypt::decrypt(request()->get('user_id'));
     @endphp
     <!-- Page Heading -->
     <div class="card">
@@ -44,6 +46,7 @@
                         $result_display = \App\Models\Exam::findOrFail($exam_id)->result_display;
                     @endphp
                     <input type="hidden" class="exam_id" value="{{ $exam_id }}">
+                    <input type="hidden" class="user_id" value="{{ $user_id }}">
                     @if ($result_display == \App\Http\Controllers\Enum\ExamEnum::AUTOMATIC_EVALUATION)
                         <span class="badge badge-lg badge-info ml-3">Automatic Evaluation</span>
                     @else
@@ -155,5 +158,5 @@
 
 @section('custom_scripts')
 {!! \App\UtilityFunction::getToastrMessage(Session::get('TOASTR_MESSAGE')) !!}
-@include('backend.pages.submissions.submissions_scripts')
+@include('frontend.pages.submissions.submissions_scripts')
 @stop

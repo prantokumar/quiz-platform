@@ -104,10 +104,10 @@
                             <input type="radio" id="result_display1" name="result_display" class="custom-control-input result_display" value="{{ \App\Http\Controllers\Enum\ExamEnum::AUTOMATIC_EVALUATION }}" checked>
                             <label class="custom-control-label" for="result_display1">Automatic Evaluation</label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline">
+                        {{-- <div class="custom-control custom-radio custom-control-inline">
                             <input type="radio" id="result_display2" name="result_display" class="custom-control-input result_display" value="{{ \App\Http\Controllers\Enum\ExamEnum::MANUAL_EVALUATION }}">
                             <label class="custom-control-label" for="result_display2">Manual Evaluation</label>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="form-group">
                         <div class="custom-control custom-radio custom-control-inline">
@@ -183,10 +183,10 @@
                             <label class="custom-control-label" for="result_edit_display1">Automatic
                                 Evaluation</label>
                         </div>
-                        <div class="custom-control custom-radio custom-control-inline">
+                        {{-- <div class="custom-control custom-radio custom-control-inline">
                             <input type="radio" id="result_edit_display2" name="result_display_edit" class="custom-control-input" value="{{ \App\Http\Controllers\Enum\ExamEnum::MANUAL_EVALUATION }}">
                             <label class="custom-control-label" for="result_edit_display2">Manual Evaluation</label>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="form-group">
                         <div class="custom-control custom-radio custom-control-inline">

@@ -65,4 +65,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/view-exam-questions-for-user', [DashboardController::class, 'viewExamQuestionsForUser'])->name('viewExamQuestionsForUser');
     Route::post('/submit-quiz', [DashboardController::class, 'submitQuiz'])->name('submitQuiz');
     /* user exam management */
+
+    /* exam submission details */
+    Route::any('/show-user-exam-submissions', [DashboardController::class, 'examSubmissionDetailsForUser'])->name('examSubmissionDetailsForUser');
+    Route::post('/genearte-submission-details-for-user', [DashboardController::class, 'generateSubmissionDetailsForUser'])->name('generateSubmissionDetailsForUser');
+    /* exam submission details */
 });

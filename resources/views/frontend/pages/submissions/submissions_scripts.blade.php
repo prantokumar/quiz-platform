@@ -12,7 +12,7 @@
             $('#submission_detail_dynamic_data').html('');
             $.ajax({
                 type: 'POST',
-                url: '{{ route('generateSubmissionDetails') }}',
+                url: '{{ route('generateSubmissionDetailsForUser') }}',
                 data: {
                     'user_id': userid,
                     'exam_id': exam_id,

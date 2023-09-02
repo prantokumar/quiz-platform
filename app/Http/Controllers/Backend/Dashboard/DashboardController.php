@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Backend\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\ExamQuestion;
+use App\Models\ExamSubmission;
+use App\Models\ExamSubmissionDetail;
+use App\Models\Question;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller

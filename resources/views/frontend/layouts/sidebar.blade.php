@@ -15,7 +15,7 @@
     <li class="nav-item @if (!empty($menu) && $menu == 'user_dashboard') active @endif">
         <a class="nav-link" href="{{ route('userDashboard') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Dashboard</span></a>
+            <span>Quiz Dashboard</span></a>
     </li>
 
     <!-- Divider -->

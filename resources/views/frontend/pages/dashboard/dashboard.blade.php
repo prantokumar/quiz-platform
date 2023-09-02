@@ -1,5 +1,5 @@
 @extends('frontend.global.master', ['menu' => 'user_dashboard'])
-@section('title', __('Dashboard'))
+@section('title', __('Quiz Dashboard'))
 
 @section('custom_stylesheet')
 @stop
@@ -8,7 +8,7 @@
 <!--begin::Admin Dashbiard -->
 <div class="container-fluid">
     <!-- Page Heading -->
-    <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
+    <h1 class="h3 mb-4 text-gray-800">Quiz Dashboard</h1>
     <!-- Page Heading -->
     <div id="show-exams">
         <div class="loading_image" style="display: none;">
